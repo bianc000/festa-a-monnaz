@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Leon: Fuoco a Monnaz | Conquista la bella Mari</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo-area">
+      <div class="logo-icon">🔥</div>
+      <div>
+        <h1>LEON: FUOCO A MONNAZ</h1>
+        <div class="subtitle">La festa di Kri a Monnaz • Conquista la bella Mari & Semina Maya!</div>
+      </div>
+    </div>
+    <div class="header-buttons">
+      <button id="spritesBtn" class="btn">👥 Personaggi & Sprite</button>
+      <button id="audioBtn" class="btn btn-pink">🔊 Audio: ON</button>
+    </div>
+  </header>
+
+  <!-- HUD Status Bar -->
+  <div class="hud-container">
+    <!-- Current Room -->
+    <div class="hud-card">
+      <div class="hud-title">
+        <span>Stanza Attuale</span>
+        <span style="color:#60a5fa;">📍 Villa Kri</span>
+      </div>
+      <div class="room-badge" id="currentRoomText">Salone di Kri</div>
+    </div>
+
+    <!-- Mari's Romance Meter -->
+    <div class="hud-card">
+      <div class="hud-title">
+        <span>Fascino su Mari</span>
+        <span style="color:#f472b6;">💖 Obiettivo Conquista</span>
+      </div>
+      <div class="meter-wrapper">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="meterFill" style="width: 20%;"></div>
+        </div>
+        <div class="meter-val" id="meterVal">20%</div>
+      </div>
+    </div>
+
+    <!-- Maya Radar Warning -->
+    <div class="hud-card">
+      <div class="hud-title">
+        <span>Radar Ostacolo</span>
+        <span>👓 Maya</span>
+      </div>
+      <div class="maya-status maya-safe" id="mayaStatusText">
+        🟢 Nessun pericolo immediato
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Viewport -->
+  <div class="game-viewport">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Notification Toast -->
+    <div id="toastNotification" class="toast-notification">
+      Benvenuto alla festa di Kri a Monnaz!
+    </div>
+
+    <!-- Dialogue Overlay Box -->
+    <div id="dialogueOverlay" class="dialogue-overlay hidden">
+      <div class="dialogue-avatar-box">
+        <img id="dialogueAvatar" src="assets/sprites/mari.png" alt="Avatar">
+      </div>
+      <div class="dialogue-content">
+        <div class="dialogue-name" id="dialogueName">Mari</div>
+        <div class="dialogue-text" id="dialogueText">Ciao Leon! Che bella festa stasera a Monnaz...</div>
+        <div class="dialogue-choices" id="dialogueChoices"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inventory & Controls Tray -->
+  <div class="inventory-bar">
+    <div class="inventory-items">
+      <span style="font-size: 11px; font-weight: bold; color: var(--text-muted); margin-right: 6px;">TASCA DI LEON:</span>
+      <div class="inventory-slot" id="slot1" title="Vuoto"></div>
+      <div class="inventory-slot" id="slot2" title="Vuoto"></div>
+      <div class="inventory-slot" id="slot3" title="Vuoto"></div>
+    </div>
+
+    <div class="controls-hint">
+      <span><kbd>WASD</kbd> / <kbd>Frecce</kbd> Muoviti</span>
+      <span><kbd>SHIFT</kbd> Scatta</span>
+      <span><kbd>SPAZIO</kbd> / <kbd>E</kbd> Interagisci / Porte</span>
+      <span><kbd>Q</kbd> / <kbd>F</kbd> Lancia Patatine</span>
+      <span><kbd>1-3</kbd> Dialoghi</span>
+    </div>
+  </div>
+
+  <!-- Touch Controls for Mobile / Tablets -->
+  <div class="touch-controls">
+    <div class="dpad">
+      <div></div>
+      <button class="dpad-btn" id="btnUp">▲</button>
+      <div></div>
+      <button class="dpad-btn" id="btnLeft">◀</button>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:10px;color:#94a3b8;">D-PAD</div>
+      <button class="dpad-btn" id="btnRight">▶</button>
+      <div></div>
+      <button class="dpad-btn" id="btnDown">▼</button>
+      <div></div>
+    </div>
+
+    <div class="action-btns">
+      <button class="action-btn" id="btnSprint">⚡ SPRINT</button>
+      <button class="action-btn pink" id="btnAction">PARLA / APRI</button>
+    </div>
+  </div>
+
+  <!-- Sprites & Help Modal -->
+  <div id="spritesModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle">👥 Membri MS & Sprite Personaggi</h3>
+        <button id="closeModalBtn" class="btn">✖ Chiudi</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Injected dynamically by game.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/house.js"></script>
+  <script src="js/dialogues.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
