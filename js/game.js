@@ -1,9 +1,9 @@
 // ============================================================
 // LEON & LA BELLA MARI - FESTA A MONNAZ (POKÉMON PERLA EDITION)
-// Full Robust Engine: Tiles, Sprites, Anti-Freeze AI, Romance Quest
+// Accurate Sinnoh Tile Engine, Wide Accessible Doorways, Anti-Freeze AI
 // ============================================================
 
-// 1. SOUND SYSTEM (Web Audio API)
+// 1. SOUND SYSTEM
 class SoundSystem {
   constructor() {
     this.ctx = null;
@@ -50,7 +50,7 @@ class SoundSystem {
 
   playBlip() { this.playTone(520, 'square', 0.04, 0.04); }
   playSelect() { this.playTone(720, 'triangle', 0.06, 0.08); }
-  playDoor() { this.playTone(200, 'square', 0.08, 0.08); }
+  playDoor() { this.playTone(220, 'square', 0.08, 0.08); }
 
   playPokemonEncounter() {
     if (this.isMuted) return;
@@ -213,183 +213,163 @@ class SoundSystem {
 
 const soundSystem = new SoundSystem();
 
-// 2. TILEMAP & VILLA LAYOUT
-const HOUSE_DATA = {
-  width: 1200,
-  height: 900,
+// 2. SINNOH VILLA MAP DATA WITH WIDE OPEN DOORWAYS
+const VILLA_MAP = {
+  w: 1040,
+  h: 760,
   rooms: [
-    { id: 'living_room', name: 'Salone delle Feste', x: 40, y: 350, w: 460, h: 360, floor: 'wood_dark', carpet: { x: 100, y: 550, w: 180, h: 120, col: '#881337', brd: '#fbbf24' } },
-    { id: 'kitchen', name: 'Cucina & Beer Pong', x: 40, y: 60, w: 460, h: 250, floor: 'checkers' },
-    { id: 'hallway', name: 'Corridoio', x: 540, y: 60, w: 160, h: 650, floor: 'wood_light', carpet: { x: 570, y: 80, w: 100, h: 610, col: '#1e3a8a', brd: '#93c5fd' } },
-    { id: 'bedroom', name: 'Camera da Letto Relax', x: 740, y: 60, w: 420, h: 280, floor: 'wood_warm', carpet: { x: 880, y: 160, w: 160, h: 120, col: '#581c87', brd: '#f472b6' } },
-    { id: 'bathroom', name: 'Bagno della Villa', x: 740, y: 380, w: 180, h: 160, floor: 'tiles_blue' },
-    { id: 'balcony', name: 'Terrazza Panoramica', x: 740, y: 580, w: 420, h: 260, floor: 'stone_deck' },
-    { id: 'garden', name: 'Giardino di Sinnoh', x: 40, y: 750, w: 460, h: 120, floor: 'grass' }
+    { id: 'living', name: 'Salone delle Feste', x: 40, y: 350, w: 460, h: 360, type: 'wood' },
+    { id: 'kitchen', name: 'Cucina & Beer Pong', x: 40, y: 50, w: 460, h: 260, type: 'checkers' },
+    { id: 'hallway', name: 'Corridoio', x: 540, y: 50, w: 160, h: 660, type: 'wood' },
+    { id: 'bedroom', name: 'Camera Relax (Stile Perla)', x: 740, y: 50, w: 260, h: 270, type: 'perla_room' },
+    { id: 'bathroom', name: 'Bagno della Villa', x: 740, y: 360, w: 180, h: 150, type: 'tiles' },
+    { id: 'balcony', name: 'Terrazza Panoramica', x: 740, y: 550, w: 260, h: 160, type: 'stone' }
   ],
+  // Solid wall bounds with GENEROUS 80px OPENINGS for seamless access!
   walls: [
-    { x: 30, y: 40, w: 1150, h: 24 },
-    { x: 30, y: 880, w: 1150, h: 24 },
-    { x: 20, y: 40, w: 24, h: 850 },
-    { x: 1170, y: 40, w: 24, h: 850 },
-    { x: 500, y: 50, w: 30, h: 260 },
-    { x: 500, y: 400, w: 30, h: 480 },
-    { x: 700, y: 50, w: 30, h: 180 },
-    { x: 700, y: 300, w: 30, h: 320 },
-    { x: 700, y: 680, w: 30, h: 200 },
-    { x: 30, y: 310, w: 480, h: 24 },
-    { x: 30, y: 720, w: 480, h: 24 },
-    { x: 730, y: 340, w: 440, h: 24 },
-    { x: 730, y: 540, w: 440, h: 24 },
-    { x: 920, y: 360, w: 24, h: 190 }
+    // Outer boundaries
+    { x: 30, y: 30, w: 980, h: 20 },
+    { x: 30, y: 720, w: 980, h: 20 },
+    { x: 20, y: 30, w: 20, h: 710 },
+    { x: 1010, y: 30, w: 20, h: 710 },
+
+    // Left side horizontal divider (between Cucina and Salone)
+    { x: 40, y: 310, w: 460, h: 24 },
+
+    // Wall between Kitchen and Hallway (with 80px opening from y=140 to 220)
+    { x: 500, y: 40, w: 24, h: 100 },
+    { x: 500, y: 220, w: 24, h: 100 },
+
+    // Wall between Living Room and Hallway (with 80px opening from y=450 to 530)
+    { x: 500, y: 320, w: 24, h: 130 },
+    { x: 500, y: 530, w: 24, h: 190 },
+
+    // Wall between Hallway and Bedroom (with 80px opening from y=140 to 220)
+    { x: 700, y: 40, w: 24, h: 100 },
+    { x: 700, y: 220, w: 24, h: 110 },
+    { x: 720, y: 320, w: 290, h: 24 },
+
+    // Wall between Hallway and Bathroom (with 70px opening from y=390 to 460)
+    { x: 700, y: 330, w: 24, h: 60 },
+    { x: 700, y: 460, w: 24, h: 70 },
+    { x: 720, y: 520, w: 290, h: 24 },
+
+    // Wall between Hallway and Balcony (with 80px opening from y=580 to 660)
+    { x: 700, y: 530, w: 24, h: 50 },
+    { x: 700, y: 660, w: 24, h: 60 }
   ],
-  doors: [
-    { id: 'door_bedroom', room: 'bedroom', x: 700, y: 230, w: 28, h: 70, isOpen: false, name: 'Porta Camera' },
-    { id: 'door_balcony', room: 'balcony', x: 700, y: 620, w: 28, h: 60, isOpen: true, name: 'Portafinestra Balcone' },
-    { id: 'door_living', room: 'living_room', x: 500, y: 310, w: 28, h: 90, isOpen: true, name: 'Arco Salone' },
-    { id: 'door_bathroom', room: 'bathroom', x: 700, y: 410, w: 28, h: 60, isOpen: false, name: 'Porta Bagno' },
-    { id: 'door_garden', room: 'garden', x: 230, y: 710, w: 80, h: 24, isOpen: true, name: 'Uscita Giardino' }
-  ],
-  furniture: [
-    { id: 'fridge', name: 'Frigorifero', x: 60, y: 70, w: 56, h: 70, type: 'fridge', isInteractive: true, action: 'fridge' },
-    { id: 'sink', name: 'Bancone Bar', x: 120, y: 70, w: 160, h: 56, type: 'counter' },
-    { id: 'beer_pong', name: 'Beer Pong Pokéball', x: 150, y: 160, w: 190, h: 76, type: 'beer_pong', isInteractive: true, action: 'beer_pong' },
-    { id: 'dj_booth', name: 'Consolle DJ Lollo', x: 60, y: 370, w: 140, h: 64, type: 'dj', isInteractive: true, action: 'dj_booth' },
-    { id: 'dancefloor', name: 'Pista di Ballo', x: 230, y: 380, w: 180, h: 140, type: 'dancefloor', isFloor: true },
-    { id: 'sofa', name: 'Divano in Pelle', x: 80, y: 550, w: 160, h: 64, type: 'sofa' },
-    { id: 'coffee_table', name: 'Tavolino Noce', x: 100, y: 630, w: 120, h: 44, type: 'table' },
-    { id: 'bed', name: 'Letto Matrimoniale', x: 920, y: 70, w: 160, h: 150, type: 'bed' },
-    { id: 'tv', name: 'TV & Console Wii', x: 760, y: 70, w: 80, h: 54, type: 'tv' },
-    { id: 'bookshelf', name: 'Libreria di Sinnoh', x: 760, y: 150, w: 50, h: 80, type: 'bookshelf' },
-    { id: 'telescope', name: 'Telescopio Astronomico', x: 1090, y: 610, w: 48, h: 48, type: 'telescope', isInteractive: true, action: 'telescope' },
-    { id: 'bench', name: 'Panchina Balcone', x: 920, y: 730, w: 130, h: 48, type: 'bench' }
+  // Wide Doorways / Thresholds with Mats
+  doorways: [
+    { id: 'door_kitchen', name: 'Arco Cucina', x: 500, y: 140, w: 24, h: 80, matColor: '#cbd5e1' },
+    { id: 'door_living', name: 'Arco Salone', x: 500, y: 450, w: 24, h: 80, matColor: '#f43f5e' },
+    { id: 'door_bedroom', name: 'Porta Camera Relax', x: 700, y: 140, w: 24, h: 80, matColor: '#38bdf8', isBarriered: false },
+    { id: 'door_bathroom', name: 'Porta Bagno', x: 700, y: 390, w: 24, h: 70, matColor: '#0284c7' },
+    { id: 'door_balcony', name: 'Uscita Terrazza', x: 700, y: 580, w: 24, h: 80, matColor: '#94a3b8', isBarriered: false }
   ]
 };
 
-// 3. DIALOGUES DATA
-const DIALOGUE_DATA = {
+// 3. DIALOGUE CONTENT
+const DIALOGUES = {
   mari: {
-    speaker: 'Mari',
-    title: 'La bella Mari ❤️',
+    speaker: 'Mari', title: 'La bella Mari ❤️',
     intro: (s) => {
-      if (s.mariAlone) return "Leon... guardaci. Finalmente da soli sul balcone. La notte è magica, ma tu sei stato incredibile stasera.";
-      if (s.mariFollowing) return "Ti sto seguendo, Leon! Portami in un posto tranquillo... lontano da Maya!";
-      if (s.mariLove >= 100) return "Leon, sei stato dolcissimo stasera... c'è troppo casino qui nel salone. Ti andrebbe di mostrarmi la terrazza o un posto appartato?";
-      return "Ciao Leon! Che bella festa stasera a Monnaz... la musica è forte, ma l'atmosfera è fantastica!";
+      if (s.mariAlone) return "Leon... finalmente soli. La vista è da togliere il fiato, ma tu sei stato un vero eroe stasera.";
+      if (s.mariFollowing) return "Ti sto seguendo, Leon! Portami in terrazza o in camera... spero che Maya non ci veda!";
+      if (s.mariLove >= 100) return "Leon, sei stato dolcissimo stasera... c'è troppo chiasso qui nel salone. Mi porti in un posto appartato solo noi due?";
+      return "Ciao Leon! Che bella festa stasera a casa di Kri... sei elegantissimo!";
     },
     choices: (s) => {
       if (s.mariLove >= 100 && !s.mariFollowing) {
-        return [
-          { text: "Certo Mari! Vieni con me, andiamo sulla terrazza!", action: 'follow', reply: "Arrivo con te! Fai strada tu, non farti intercettare da Maya!" }
-        ];
+        return [{ text: "Certo Mari! Andiamo subito!", action: 'follow', reply: "Arrivo con te! Fai strada tu!" }];
       }
-      if (s.mariFollowing) {
-        return [
-          { text: "Seguimi, quasi arrivati...", reply: "Ti seguo a ruota!" }
-        ];
-      }
+      if (s.mariFollowing) return [{ text: "Seguimi, quasi arrivati...", reply: "Ti seguo a ruota!" }];
       const opts = [
-        { text: "Mari, sei incantevole stasera. Questo vestito viola spicca su tutta la festa.", bonus: 30, reply: "Grazie Leon! Sei sempre un vero gentiluomo, e quella maglietta Vitality ti sta davvero bene." },
-        { text: "Leon & Mari: la coppia più forte di tutta MS, che ne pensi?", bonus: 20, reply: "Ahaha che sfacciato! Però ammetto che hai stile e mi fai ridere." }
+        { text: "Mari, sei incantevole stasera. Questo vestito viola e magenta ti sta d'incanto.", bonus: 35, reply: "Grazie Leon! Sei sempre un vero gentiluomo, e quella maglietta Vitality ti dona tantissimo." },
+        { text: "Leon & Mari: la coppia più forte di Sinnoh e di MS!", bonus: 20, reply: "Ahaha che sfacciato! Però ammetto che mi fai battere il cuore." }
       ];
       if (s.inventory.includes('drink')) {
-        opts.unshift({ text: "Ti ho portato questo Cocktail Fragola & Menta fresco dal frigo!", bonus: 50, consume: 'drink', reply: "Mio dio, il mio cocktail preferito! Ma come facevi a saperlo? Leon, sei incredibile!" });
+        opts.unshift({ text: "Ti ho portato il Cocktail Fragola & Menta fresco dal frigo!", bonus: 50, consume: 'drink', reply: "Mio dio, il mio cocktail preferito! Ma come facevi a saperlo? Sei magico!" });
       }
       if (s.djRomance) {
-        opts.push({ text: "Hai sentito la canzone romantica che ha messo Lollo per noi?", bonus: 30, reply: "È stupenda! Adoro questo genere di musica... mi fa venire voglia di andare a guardare le stelle." });
+        opts.push({ text: "Senti la traccia lenta che ha messo DJ Lollo per noi?", bonus: 25, reply: "È bellissima! Mi fa venire voglia di andare a guardare le stelle." });
       }
       return opts;
     }
   },
-
   maya: {
-    speaker: 'Maya',
-    title: 'L\'incubo di Monnaz 👓',
-    intro: () => "LEOOOON! Ma allora esisti! Ti cercavo! Ho fatto il test di affinità di Sinnoh e dice che siamo anime gemelle al 99%!",
+    speaker: 'Maya', title: 'L\'incubo di Monnaz 👓',
+    intro: () => "LEOOON! Ti ho preso! Il nostro legame astrale è al 100%! Guarda il mio maglione a pois!",
     choices: (s) => {
-      const opts = [
-        { text: "Guarda Maya, un Bidoof dorato fuori dalla finestra!", action: 'escape_maya', reply: "DOVE?! Un Bidoof dorato?! *Maya si gira confusa cercandolo invano*" }
-      ];
+      const opts = [{ text: "Guarda Maya, un Bidoof dorato fuori dalla finestra!", action: 'escape_maya', reply: "DOVE?! Un Bidoof dorato?! *Maya si gira confusa*" }];
       if (s.inventory.includes('chips')) {
-        opts.unshift({ text: "(Usa il pacchetto di patatine al tartufo di Bubi)", action: 'feed_maya', consume: 'chips', reply: "PATATINE AL TARTUFO! Slurp! *Maya si fionda a divorare le patatine*" });
+        opts.unshift({ text: "(Lancia il pacchetto di patatine al tartufo di Bubi)", action: 'feed_maya', consume: 'chips', reply: "PATATINE AL TARTUFO! Slurp! *Maya si fionda a mangiare*" });
       }
       return opts;
     }
   },
-
   kri: {
-    speaker: 'Kri',
-    title: 'Padrone di Casa & Barman',
-    intro: () => "Leon, fratellone di MS! Benvenuto a Monnaz a casa mia! La festa è accesa!",
-    choices: (s) => [
-      { text: "Kri, hai visto la bella Mari?", reply: "Mari è nei paraggi della pista! Splende stasera. Ma occhio: Maya ha già chiesto di te tre volte!" },
-      { text: "Dov'è il drink speciale di Mari?", reply: "Nel frigo in cucina! Prendilo pure. E se porti una birra a Lollo alla console, ti mette la traccia romantica!" }
-    ]
+    speaker: 'Kri', title: 'Padrone di Casa & Barman',
+    intro: () => "Leon, fratellone! Benvenuto a Monnaz a casa mia! Prendi pure da bere in frigo!",
+    choices: () => [{ text: "Kri, hai visto la bella Mari?", reply: "È vicino alla pista da ballo! Splende stasera. Occhio a Maya però!" }]
   },
-
   lollo: {
-    speaker: 'Lollo',
-    title: 'DJ Resident Cuoripoli 🎧',
-    intro: (s) => s.djRomance ? "La traccia lenta romantica sta suonando a palla per te e Mari, Leon!" : "Yo Leon! Se mi porti una birra fresca dal frigo metto su la playlist 'Notte Romantica a Monnaz'!",
+    speaker: 'Lollo', title: 'DJ Resident Cuoripoli 🎧',
+    intro: (s) => s.djRomance ? "Il pezzo lento sta suonando a palla per te e Mari, Leon!" : "Yo Leon! Portami una birra dal frigo e metto la slow dance!",
     choices: (s) => {
       if (s.inventory.includes('beer')) {
-        return [{ text: "Ecco la birra fresca, Lollo! Metti il pezzo lento!", consume: 'beer', action: 'set_romance', reply: "Grande bro! Cambio subito traccia: beat romantico per fare colpo su Mari!" }];
+        return [{ text: "Ecco la birra ghiacciata, Lollo! Metti il pezzo romantico!", consume: 'beer', action: 'set_romance', reply: "Grande bro! Traccia romantica on fire!" }];
       }
-      return [{ text: "Che musica stai mettendo?", reply: "Hit da ballare! Portami una birra dal frigo e parte la slow-dance!" }];
+      return [{ text: "Che musica c'è in consolle?", reply: "Hit da ballare! Portami una birra dal frigo per la slow dance!" }];
     }
   },
-
   bubi: {
-    speaker: 'Bubi',
-    title: 'Maestro Snack (MS) 🍟',
-    intro: () => "Crunch crunch! Leon, queste patatine al tartufo sono divine. Vuoi un pacchetto?",
-    choices: (s) => [
-      { text: "Grazie Bubi, dammene uno! Mi servirà contro Maya.", action: 'give_chips', reply: "Tieni! Se Maya ti punta, lanciale per terra col tasto Q: non resiste al cibo!" }
-    ]
+    speaker: 'Bubi', title: 'Maestro Snack 🍟',
+    intro: () => "Crunch crunch! Queste patatine al tartufo sono magiche. Ne vuoi un pacchetto?",
+    choices: () => [{ text: "Grazie Bubi, dammene uno per distrarre Maya!", action: 'give_chips', reply: "Tieni! Se Maya ti punta, premendo Q le butterai a terra e si fermerà!" }]
   },
-
   ento: {
     speaker: 'Ento', title: 'Asso Allenatore MS 🧢',
-    intro: () => "Bella Leon! Punta tutto sulla terrazza panoramica: la vista sul lago è micidiale. Chiudi la porta dietro di voi!",
-    choices: () => [{ text: "Grazie del consiglio, Ento!", reply: "Forza Leon, tutta MS è con te!" }]
+    intro: () => "Bella Leon! Tutte le porte sono aperte. Porta Mari sul balcone o in camera relax!",
+    choices: () => [{ text: "Grazie Ento!", reply: "Forza Leon, tutta MS è con te!" }]
   },
   matti: {
     speaker: 'Matti', title: 'Campione Beer Pong 🕶️',
-    intro: () => "Stasera si sboccia a Monnaz! Sto dominando al tavolo con Jelmo!",
-    choices: () => [{ text: "Grande Matti, continua così!", reply: "Daje Leon, conquista Mari!" }]
+    intro: () => "Stasera si sboccia a Monnaz! Ho appena fatto centro nel bicchiere di Jelmo!",
+    choices: () => [{ text: "Daje Matti!", reply: "Conquista Mari!" }]
   },
   jona: {
     speaker: 'Jona', title: 'Allenatore MS 👕',
-    intro: () => "Leon! Se tieni premuto SHIFT scatti veloce e semini Maya in un attimo!",
-    choices: () => [{ text: "Ottimo trucco!", reply: "Vai a prenderti Mari!" }]
+    intro: () => "Leon, se tieni premuto SHIFT scatti veloce e semini Maya!",
+    choices: () => [{ text: "Ottimo!", reply: "Vai convinto!" }]
   },
   pibe: {
     speaker: 'Pibe', title: 'Bomber di Sinnoh ⚽',
-    intro: () => "Dribbling secco su Maya e assist per il gol con Mari! Come sul campo!",
-    choices: () => [{ text: "Tattica perfetta!", reply: "Non farti marcare a uomo!" }]
+    intro: () => "Dribbla Maya come sul campo! Gli accessi alle stanze sono tutti aperti!",
+    choices: () => [{ text: "Chiaro!", reply: "Punta dritto al gol con Mari!" }]
   },
   roby: {
     speaker: 'Roby', title: 'Amico di Sinnoh 💚',
-    intro: () => "Leon! Mari prima ha detto a Lindi che adora la vista delle stelle dal balcone...",
-    choices: () => [{ text: "Ottima informazione, grazie Roby!", reply: "Falla tua, bro!" }]
+    intro: () => "Mari stasera ti guardava appena sei entrato! È il tuo momento!",
+    choices: () => [{ text: "Grazie Roby!", reply: "Forza!" }]
   },
   lindi: {
     speaker: 'Lindi', title: 'Amica di Mari ✨',
-    intro: () => "Leon! Mari ha scelto apposta questo vestito viola per la festa. Fai il galante!",
-    choices: () => [{ text: "È la più bella di tutte.", reply: "Lo sappiamo tutti! Vai convinto!" }]
+    intro: () => "Mari adora le persone gentili. Fai il galante e andrà alla grande!",
+    choices: () => [{ text: "Grazie Lindi!", reply: "Buona fortuna!" }]
   },
   jelmo: {
     speaker: 'Jelmo', title: 'Scienziato MS 📊',
-    intro: () => "Probabilità di successo con Mari: 94%. Probabilità di intercettazione di Maya nel corridoio: elevata.",
-    choices: () => [{ text: "Prenderò la via della cucina!", reply: "Decisione tatticamente ottimale." }]
+    intro: () => "Tutte le stanze hanno corridoi larghi 80 pixel. Nessun rischio di rimanere incastrati.",
+    choices: () => [{ text: "Tatticamente perfetto!", reply: "Buona missione." }]
   },
   ara: {
     speaker: 'Ara', title: 'Fanciulla delle Feste 🌸',
-    intro: () => "Che bella serata! Leon, se porti Mari sul balcone ricordati di chiudere la portafinestra!",
-    choices: () => [{ text: "Sarà fatto!", reply: "Buona fortuna!" }]
+    intro: () => "La notte a Monnaz è stupenda! Se resti solo con Mari in terrazza hai vinto!",
+    choices: () => [{ text: "Vado subito!", reply: "Divertitevi!" }]
   }
 };
 
-// 4. MAIN GAME ENGINE
+// 4. MAIN GAME CONTROLLER
 class GameEngine {
   constructor() {
     this.canvas = document.getElementById('gameCanvas');
@@ -400,25 +380,62 @@ class GameEngine {
     this.keys = {};
     this.setupInput();
 
-    // Cache-busting sprite loader
-    this.sprites = {};
-    this.loadSprites();
+    // Load authentic assets with cache buster
+    this.loadAssets();
 
-    // Game State
+    // Init state
     this.initGame();
 
-    // Camera
     this.camera = { x: 120, y: 450 };
-    this.zoomMode = 'pokemon'; // 'pokemon' (DS close-up) or 'overview'
+    this.zoomMode = 'pokemon';
 
-    // UI bindings
     this.bindUI();
 
-    // Start Loop
     this.lastTime = performance.now();
     requestAnimationFrame((t) => this.loop(t));
 
-    this.showToast("🎮 Benvenuto a Monnaz! Trova la bella Mari e resta da solo con lei!");
+    this.showToast("🎮 Benvenuto a Monnaz! Tutte le stanze sono aperte: trova la bella Mari!");
+  }
+
+  loadAssets() {
+    const v = Date.now();
+    this.sprites = {};
+    const ids = ['leon', 'mari', 'kri', 'maya', 'ento', 'matti', 'jona', 'pibe', 'lollo', 'roby', 'lindi', 'bubi', 'jelmo', 'ara'];
+    ids.forEach(id => {
+      const img = new Image();
+      img.src = `assets/sprites/${id}.png?v=${v}`;
+      this.sprites[id] = img;
+    });
+
+    // Battle Portraits
+    this.portraits = {
+      leon: new Image(),
+      mari: new Image()
+    };
+    this.portraits.leon.src = `assets/sprites/leon_portrait.png?v=${v}`;
+    this.portraits.mari.src = `assets/sprites/mari_portrait.png?v=${v}`;
+
+    // Pokemon Perla Room Sprites extracted from user reference image!
+    this.pkmn = {
+      floor: new Image(),
+      wall: new Image(),
+      tv: new Image(),
+      pc_desk: new Image(),
+      rug: new Image(),
+      bed: new Image(),
+      stairs: new Image(),
+      plant: new Image(),
+      window: new Image()
+    };
+    this.pkmn.floor.src = `assets/sprites/pkmn_floor.png?v=${v}`;
+    this.pkmn.wall.src = `assets/sprites/pkmn_wall.png?v=${v}`;
+    this.pkmn.tv.src = `assets/sprites/pkmn_tv.png?v=${v}`;
+    this.pkmn.pc_desk.src = `assets/sprites/pkmn_pc_desk.png?v=${v}`;
+    this.pkmn.rug.src = `assets/sprites/pkmn_rug.png?v=${v}`;
+    this.pkmn.bed.src = `assets/sprites/pkmn_bed.png?v=${v}`;
+    this.pkmn.stairs.src = `assets/sprites/pkmn_stairs.png?v=${v}`;
+    this.pkmn.plant.src = `assets/sprites/pkmn_plant.png?v=${v}`;
+    this.pkmn.window.src = `assets/sprites/pkmn_window.png?v=${v}`;
   }
 
   initGame() {
@@ -437,39 +454,37 @@ class GameEngine {
 
     this.aloneCountdown = 0;
 
-    // Player (Leon)
+    // Leon
     this.player = {
       x: 120, y: 450,
       w: 32, h: 40,
-      speed: 3.0,
+      speed: 3.2,
       sprintSpeed: 4.8,
       dir: 'down',
       isMoving: false,
       isSprinting: false,
-      shieldTimer: 0 // invulnerability frames after escaping Maya
+      shieldTimer: 0
     };
 
-    // Characters list
+    // NPCs
     this.npcs = [
-      { id: 'mari', name: 'Mari', x: 320, y: 420, dir: 'down', room: 'living_room', isFollowing: false },
+      { id: 'mari', name: 'Mari', x: 320, y: 420, dir: 'down', room: 'living', isFollowing: false },
       { id: 'kri', name: 'Kri', x: 100, y: 160, dir: 'right', room: 'kitchen' },
-      { id: 'maya', name: 'Maya', x: 600, y: 200, dir: 'down', room: 'hallway', state: 'patrol', timer: 120, confusedTimer: 0 },
-      { id: 'lollo', name: 'Lollo', x: 120, y: 345, dir: 'down', room: 'living_room' },
+      { id: 'maya', name: 'Maya', x: 620, y: 220, dir: 'down', room: 'hallway', state: 'patrol', timer: 120, confusedTimer: 0 },
+      { id: 'lollo', name: 'Lollo', x: 120, y: 345, dir: 'down', room: 'living' },
       { id: 'bubi', name: 'Bubi', x: 320, y: 90, dir: 'left', room: 'kitchen' },
       { id: 'matti', name: 'Matti', x: 390, y: 180, dir: 'left', room: 'kitchen' },
       { id: 'jelmo', name: 'Jelmo', x: 390, y: 230, dir: 'left', room: 'kitchen' },
-      { id: 'ento', name: 'Ento', x: 80, y: 640, dir: 'right', room: 'living_room' },
-      { id: 'roby', name: 'Roby', x: 230, y: 640, dir: 'left', room: 'living_room' },
+      { id: 'ento', name: 'Ento', x: 80, y: 640, dir: 'right', room: 'living' },
+      { id: 'roby', name: 'Roby', x: 230, y: 640, dir: 'left', room: 'living' },
       { id: 'jona', name: 'Jona', x: 620, y: 530, dir: 'down', room: 'hallway' },
       { id: 'pibe', name: 'Pibe', x: 620, y: 410, dir: 'up', room: 'hallway' },
-      { id: 'lindi', name: 'Lindi', x: 420, y: 450, dir: 'left', room: 'living_room' },
+      { id: 'lindi', name: 'Lindi', x: 420, y: 450, dir: 'left', room: 'living' },
       { id: 'ara', name: 'Ara', x: 230, y: 800, dir: 'right', room: 'garden' }
     ];
 
-    // Reset doors
-    HOUSE_DATA.doors.forEach(d => {
-      d.isOpen = (d.id === 'door_balcony' || d.id === 'door_living' || d.id === 'door_garden');
-    });
+    // Reset barriers
+    VILLA_MAP.doorways.forEach(d => d.isBarriered = false);
 
     this.chipsFloor = null;
     this.closeDialogue();
@@ -477,39 +492,14 @@ class GameEngine {
     soundSystem.setRomantic(false);
   }
 
-  loadSprites() {
-    const v = Date.now();
-    const ids = ['leon', 'mari', 'kri', 'maya', 'ento', 'matti', 'jona', 'pibe', 'lollo', 'roby', 'lindi', 'bubi', 'jelmo', 'ara'];
-    ids.forEach(id => {
-      const img = new Image();
-      img.src = `assets/sprites/${id}.png?v=${v}`;
-      this.sprites[id] = img;
-    });
-
-    // Battle Portraits
-    this.portraits = {
-      leon: new Image(),
-      mari: new Image()
-    };
-    this.portraits.leon.src = `assets/sprites/leon_portrait.png?v=${v}`;
-    this.portraits.mari.src = `assets/sprites/mari_portrait.png?v=${v}`;
-  }
-
   setupInput() {
     window.addEventListener('keydown', (e) => {
       this.keys[e.code] = true;
-      if (e.code === 'Space' || e.code === 'KeyE') {
-        this.handleAction();
-      }
-      if (e.code === 'Escape') {
-        this.closeDialogue();
-      }
-      if (e.code === 'KeyQ' || e.code === 'KeyF') {
-        this.throwChips();
-      }
+      if (e.code === 'Space' || e.code === 'KeyE') this.handleAction();
+      if (e.code === 'Escape') this.closeDialogue();
+      if (e.code === 'KeyQ' || e.code === 'KeyF') this.throwChips();
       if (this.state.dialogueOpen && (e.code === 'Digit1' || e.code === 'Digit2' || e.code === 'Digit3')) {
-        const idx = parseInt(e.key) - 1;
-        this.chooseOption(idx);
+        this.chooseOption(parseInt(e.key) - 1);
       }
     });
 
@@ -517,7 +507,6 @@ class GameEngine {
       this.keys[e.code] = false;
     });
 
-    // Mobile touch
     const bindTouch = (id, code) => {
       const el = document.getElementById(id);
       if (!el) return;
@@ -536,39 +525,29 @@ class GameEngine {
   }
 
   bindUI() {
-    // Restart button
     document.getElementById('btnRestart').addEventListener('click', () => {
       this.initGame();
-      this.showToast("🔄 Partita ricominciata daccapo!");
+      this.showToast("🔄 Partita riavviata dall'inizio!");
     });
 
-    // Camera toggle
     document.getElementById('btnCamera').addEventListener('click', () => {
       this.zoomMode = (this.zoomMode === 'pokemon') ? 'overview' : 'pokemon';
       document.getElementById('btnCamera').textContent = (this.zoomMode === 'pokemon') ? '🎥 Zoom DS' : '🗺️ Panoramica';
     });
 
-    // Audio toggle
     document.getElementById('btnAudio').addEventListener('click', () => {
       const isMuted = soundSystem.toggleMute();
       document.getElementById('btnAudio').textContent = isMuted ? '🔇 Audio: OFF' : '🔊 BGM: ON';
       document.getElementById('btnAudio').classList.toggle('btn-pink', !isMuted);
     });
 
-    // Characters modal
-    document.getElementById('btnChars').addEventListener('click', () => {
-      this.showCharsModal();
-    });
+    document.getElementById('btnChars').addEventListener('click', () => this.showCharsModal());
     document.getElementById('btnCloseModal').addEventListener('click', () => {
       document.getElementById('modalLayer').classList.add('hidden');
     });
 
-    // Bag item click
-    document.getElementById('slotChips').addEventListener('click', () => {
-      this.throwChips();
-    });
+    document.getElementById('slotChips').addEventListener('click', () => this.throwChips());
 
-    // First click to start audio
     window.addEventListener('click', () => {
       soundSystem.init();
       if (!soundSystem.musicPlaying && !soundSystem.isMuted) soundSystem.startBgm();
@@ -576,7 +555,7 @@ class GameEngine {
   }
 
   getRoomAt(x, y) {
-    for (const r of HOUSE_DATA.rooms) {
+    for (const r of VILLA_MAP.rooms) {
       if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) {
         return r;
       }
@@ -584,21 +563,37 @@ class GameEngine {
     return { id: 'unknown', name: 'Villa di Kri' };
   }
 
-  isSolid(x, y, rad = 14) {
-    // Walls
-    for (const w of HOUSE_DATA.walls) {
-      if (x + rad > w.x && x - rad < w.x + w.w && y + rad > w.y && y - rad < w.y + w.h) return true;
-    }
-    // Closed doors
-    for (const d of HOUSE_DATA.doors) {
-      if (!d.isOpen) {
-        if (x + rad > d.x && x - rad < d.x + d.w && y + rad > d.y && y - rad < d.y + d.h) return true;
+  isSolid(x, y, rad = 12) {
+    // Solid walls
+    for (const w of VILLA_MAP.walls) {
+      if (x + rad > w.x && x - rad < w.x + w.w && y + rad > w.y && y - rad < w.y + w.h) {
+        return true;
       }
     }
-    // Solid furniture
-    for (const f of HOUSE_DATA.furniture) {
-      if (f.isFloor) continue;
-      if (x + rad > f.x && x - rad < f.x + f.w && y + rad > f.y && y - rad < f.y + f.h) return true;
+    // Barriered doorways (locked by player)
+    for (const d of VILLA_MAP.doorways) {
+      if (d.isBarriered) {
+        if (x + rad > d.x && x - rad < d.x + d.w && y + rad > d.y && y - rad < d.y + d.h) {
+          return true;
+        }
+      }
+    }
+    // Furniture bounds
+    const solidItems = [
+      { x: 60, y: 70, w: 56, h: 60 },   // Fridge
+      { x: 120, y: 70, w: 160, h: 50 }, // Counter
+      { x: 150, y: 160, w: 190, h: 70 },// Beer Pong
+      { x: 60, y: 370, w: 140, h: 60 }, // DJ
+      { x: 80, y: 550, w: 160, h: 60 }, // Sofa
+      { x: 760, y: 60, w: 60, h: 40 },  // PC Desk
+      { x: 830, y: 60, w: 70, h: 40 },  // TV
+      { x: 910, y: 60, w: 70, h: 60 },  // Stairs
+      { x: 910, y: 170, w: 60, h: 80 }  // Bed
+    ];
+    for (const f of solidItems) {
+      if (x + rad > f.x && x - rad < f.x + f.w && y + rad > f.y && y - rad < f.y + f.h) {
+        return true;
+      }
     }
     return false;
   }
@@ -613,19 +608,21 @@ class GameEngine {
 
     const p = this.player;
 
-    // Check door nearby
-    for (const d of HOUSE_DATA.doors) {
-      const cx = d.x + d.w / 2;
-      const cy = d.y + d.h / 2;
-      if (Math.hypot(p.x - cx, p.y - cy) < 46) {
-        d.isOpen = !d.isOpen;
-        soundSystem.playDoor();
-        this.showToast(`${d.name} ${d.isOpen ? 'APERTA' : 'CHIUSA'}`);
-        return;
+    // 1. Check Doorway Barrier Toggle (Bedroom & Balcony)
+    for (const d of VILLA_MAP.doorways) {
+      if (d.id === 'door_bedroom' || d.id === 'door_balcony') {
+        const cx = d.x + d.w / 2;
+        const cy = d.y + d.h / 2;
+        if (Math.hypot(p.x - cx, p.y - cy) < 48) {
+          d.isBarriered = !d.isBarriered;
+          soundSystem.playDoor();
+          this.showToast(`${d.name}: ${d.isBarriered ? 'BARRIERA PRIVACY CHIUSA' : 'ACCESSO APERTO'}`);
+          return;
+        }
       }
     }
 
-    // Check NPC nearby
+    // 2. Check nearby NPC to talk
     for (const n of this.npcs) {
       if (Math.hypot(p.x - n.x, p.y - n.y) < 50) {
         this.openDialogue(n.id);
@@ -633,20 +630,8 @@ class GameEngine {
       }
     }
 
-    // Check furniture
-    for (const f of HOUSE_DATA.furniture) {
-      if (!f.isInteractive) continue;
-      const cx = f.x + f.w / 2;
-      const cy = f.y + f.h / 2;
-      if (Math.hypot(p.x - cx, p.y - cy) < 50) {
-        this.interactFurniture(f);
-        return;
-      }
-    }
-  }
-
-  interactFurniture(f) {
-    if (f.action === 'fridge') {
+    // 3. Check Fridge
+    if (Math.hypot(p.x - 90, p.y - 100) < 55) {
       soundSystem.playPickup();
       if (!this.state.inventory.includes('drink')) {
         this.state.inventory.push('drink');
@@ -655,17 +640,16 @@ class GameEngine {
         this.state.inventory.push('beer');
         this.showToast("Hai preso: 'Birra Gelata' per DJ Lollo! 🍺");
       } else {
-        this.showToast("Il frigo è pieno di bibite e ghiaccio.");
+        this.showToast("Il frigo è pieno di bibite fresche.");
       }
       this.updateHUD();
-    } else if (f.action === 'dj_booth') {
+      return;
+    }
+
+    // 4. Check DJ Booth
+    if (Math.hypot(p.x - 130, p.y - 400) < 55) {
       this.openDialogue('lollo');
-    } else if (f.action === 'beer_pong') {
-      soundSystem.playBlip();
-      this.showToast("Matti e Jelmo stanno giocando a Beer Pong!");
-    } else if (f.action === 'telescope') {
-      soundSystem.playBlip();
-      this.showToast("Attraverso il telescopio si vede il Lago Verità!");
+      return;
     }
   }
 
@@ -683,7 +667,7 @@ class GameEngine {
   }
 
   openDialogue(speakerId) {
-    const data = DIALOGUE_DATA[speakerId];
+    const data = DIALOGUES[speakerId];
     if (!data) return;
 
     this.state.dialogueOpen = true;
@@ -750,7 +734,7 @@ class GameEngine {
       const mari = this.npcs.find(n => n.id === 'mari');
       if (mari) mari.isFollowing = true;
       soundSystem.playHeart();
-      this.showToast("❤️ Mari ti sta seguendo! Portala da sola sul balcone o in camera!");
+      this.showToast("❤️ Mari ti sta seguendo! Portala in una stanza tranquilla senza farti beccare!");
     } else if (choice.action === 'give_chips') {
       if (!this.state.inventory.includes('chips')) {
         this.state.inventory.push('chips');
@@ -763,17 +747,16 @@ class GameEngine {
       soundSystem.playHeart();
       this.showToast("🎶 Lollo ha messo la slow dance per conquistare Mari!");
     } else if (choice.action === 'escape_maya') {
-      // Free Leon!
       this.escapeMaya();
     } else if (choice.action === 'feed_maya') {
-      this.distractMayaWithSnack();
+      this.feedMaya();
     }
   }
 
   escapeMaya() {
     this.closeDialogue();
     // Move Leon away safely
-    const pushDist = 70;
+    const pushDist = 80;
     const nx = (this.player.dir === 'left') ? this.player.x - pushDist : this.player.x + pushDist;
     if (!this.isSolid(nx, this.player.y)) this.player.x = nx;
 
@@ -781,14 +764,14 @@ class GameEngine {
     const maya = this.npcs.find(n => n.id === 'maya');
     if (maya) {
       maya.state = 'confused';
-      maya.confusedTimer = 600; // ~10 seconds
+      maya.confusedTimer = 600;
     }
     this.player.shieldTimer = 240; // 4 seconds invulnerability
     soundSystem.playTone(600, 'sine', 0.15, 0.15);
     this.showToast("💨 Sei sfuggito a Maya! È confusa per qualche secondo!");
   }
 
-  distractMayaWithSnack() {
+  feedMaya() {
     this.closeDialogue();
     const maya = this.npcs.find(n => n.id === 'maya');
     if (maya) {
@@ -826,12 +809,10 @@ class GameEngine {
     const roomEl = document.getElementById('roomBadge');
     if (roomEl) roomEl.textContent = room.name;
 
-    // Slots
     document.getElementById('slotDrink').classList.toggle('active', this.state.inventory.includes('drink'));
     document.getElementById('slotBeer').classList.toggle('active', this.state.inventory.includes('beer'));
     document.getElementById('slotChips').classList.toggle('active', this.state.inventory.includes('chips'));
 
-    // Maya Radar
     const maya = this.npcs.find(n => n.id === 'maya');
     const radar = document.getElementById('mayaRadar');
     if (maya && radar) {
@@ -885,7 +866,7 @@ class GameEngine {
         const dist = Math.hypot(this.player.x - mari.x, this.player.y - mari.y);
         if (dist > 38) {
           const angle = Math.atan2(this.player.y - mari.y, this.player.x - mari.x);
-          const spd = this.player.isSprinting ? 3.6 : 2.7;
+          const spd = this.player.isSprinting ? 3.6 : 2.8;
           const nx = mari.x + Math.cos(angle) * spd;
           const ny = mari.y + Math.sin(angle) * spd;
           if (!this.isSolid(nx, mari.y)) mari.x = nx;
@@ -896,12 +877,11 @@ class GameEngine {
       }
     }
 
-    // 2. Maya AI (Free of infinite freezes)
+    // 2. Maya AI (Free of freeze bugs!)
     const maya = this.npcs.find(n => n.id === 'maya');
     if (maya) {
       maya.room = this.getRoomAt(maya.x, maya.y).id;
 
-      // Confused state (safe window for player)
       if (maya.state === 'confused') {
         maya.confusedTimer--;
         if (maya.confusedTimer <= 0) {
@@ -911,7 +891,6 @@ class GameEngine {
         return;
       }
 
-      // Check dropped chips
       if (this.chipsFloor) {
         const dChips = Math.hypot(this.chipsFloor.x - maya.x, this.chipsFloor.y - maya.y);
         if (dChips < 80) {
@@ -926,8 +905,7 @@ class GameEngine {
 
       const distLeon = Math.hypot(this.player.x - maya.x, this.player.y - maya.y);
 
-      // Can Maya spot Leon? Only if Leon is not shielded
-      if (this.player.shieldTimer <= 0 && distLeon < 190 && !this.state.won) {
+      if (this.player.shieldTimer <= 0 && distLeon < 180 && !this.state.won) {
         if (maya.state !== 'chase') {
           maya.state = 'chase';
           soundSystem.playPokemonEncounter();
@@ -935,17 +913,14 @@ class GameEngine {
           this.showToast("❗️ MAYA TI HA VISTO! SCAPPA O LANCIA PATATINE!");
         }
 
-        // Chase
         const angle = Math.atan2(this.player.y - maya.y, this.player.x - maya.x);
-        const spd = 2.6;
+        const spd = 2.5;
         const nx = maya.x + Math.cos(angle) * spd;
         const ny = maya.y + Math.sin(angle) * spd;
         if (!this.isSolid(nx, maya.y)) maya.x = nx;
         if (!this.isSolid(maya.x, ny)) maya.y = ny;
 
-        // Caught check
         if (distLeon < 32 && !this.state.dialogueOpen) {
-          // If Mari was following, Mari abandons
           if (mari && mari.isFollowing) {
             mari.isFollowing = false;
             mari.x = 320; mari.y = 420;
@@ -957,21 +932,20 @@ class GameEngine {
           this.openDialogue('maya');
         }
       } else {
-        // Patrol
         maya.state = 'patrol';
         maya.timer--;
         if (maya.timer <= 0) {
           maya.timer = 180 + Math.random() * 120;
           maya.target = [
-            { x: 260, y: 440 }, { x: 600, y: 150 }, { x: 600, y: 550 }, { x: 200, y: 180 }
+            { x: 260, y: 440 }, { x: 620, y: 150 }, { x: 620, y: 550 }, { x: 200, y: 180 }
           ][Math.floor(Math.random() * 4)];
         }
         if (maya.target) {
           const d = Math.hypot(maya.target.x - maya.x, maya.target.y - maya.y);
           if (d > 10) {
             const angle = Math.atan2(maya.target.y - maya.y, maya.target.x - maya.x);
-            const nx = maya.x + Math.cos(angle) * 1.6;
-            const ny = maya.y + Math.sin(angle) * 1.6;
+            const nx = maya.x + Math.cos(angle) * 1.5;
+            const ny = maya.y + Math.sin(angle) * 1.5;
             if (!this.isSolid(nx, maya.y)) maya.x = nx;
             if (!this.isSolid(maya.x, ny)) maya.y = ny;
           }
@@ -1000,7 +974,6 @@ class GameEngine {
     const isRomanticRoom = (pRoom === 'balcony' || pRoom === 'bedroom');
 
     if (isRomanticRoom && pRoom === mRoom) {
-      // Check if any other NPC is in this room
       let someoneElse = false;
       for (const n of this.npcs) {
         if (n.id !== 'mari' && n.room === pRoom) {
@@ -1035,7 +1008,7 @@ class GameEngine {
     const textEl = document.getElementById('diagText');
     const choicesEl = document.getElementById('diagChoices');
 
-    const place = (roomId === 'balcony') ? 'sul balcone sotto il cielo stellato di Monnaz' : 'nella camera relax';
+    const place = (roomId === 'balcony') ? 'sul balcone sotto le stelle di Monnaz' : 'nella camera relax';
     textEl.textContent = `MARI: "Leon... finalmente soli ${place}. Sei stato incredibile stasera. Sei riuscito a conquistare il mio cuore!"`;
 
     choicesEl.innerHTML = `
@@ -1085,11 +1058,11 @@ class GameEngine {
       this.ctx.scale(zoom, zoom);
       this.ctx.translate(-this.camera.x, -this.camera.y);
     } else {
-      const fit = Math.min(this.canvas.width / 1200, this.canvas.height / 900);
+      const fit = Math.min(this.canvas.width / 1040, this.canvas.height / 760);
       this.ctx.scale(fit, fit);
     }
 
-    // Draw Villa Rooms & Floors
+    // Draw Villa Rooms & Pokemon Perla Tiles
     this.drawVilla();
 
     // Draw Dropped Chips
@@ -1106,12 +1079,12 @@ class GameEngine {
     // Draw Characters
     this.npcs.forEach(n => this.drawCharacter(n));
 
-    // Draw Player (with invulnerability flashing if shielded)
+    // Draw Player (with invulnerability flash if shielded)
     if (this.player.shieldTimer <= 0 || Math.floor(Date.now() / 80) % 2 === 0) {
       this.drawCharacter(this.player, true);
     }
 
-    // Tooltip for interactions
+    // Interaction tooltip
     if (!this.state.dialogueOpen && !this.state.won) {
       this.drawInteractionTip();
     }
@@ -1120,7 +1093,7 @@ class GameEngine {
     if (this.aloneCountdown > 0) {
       const alpha = Math.min(0.35, this.aloneCountdown / 200);
       this.ctx.fillStyle = `rgba(236, 72, 153, ${alpha})`;
-      this.ctx.fillRect(0, 0, HOUSE_DATA.width, HOUSE_DATA.height);
+      this.ctx.fillRect(0, 0, VILLA_MAP.w, VILLA_MAP.h);
       this.ctx.fillStyle = '#fff';
       this.ctx.font = 'bold 18px monospace';
       this.ctx.fillText(`✨ MOMENTO ROMANTICO CON MARI! (${Math.ceil((160 - this.aloneCountdown) / 50)}s) ✨`, this.player.x - 200, this.player.y - 70);
@@ -1130,21 +1103,17 @@ class GameEngine {
   }
 
   drawVilla() {
-    // Rooms
-    HOUSE_DATA.rooms.forEach(r => {
-      if (r.floor === 'wood_dark' || r.floor === 'wood_light' || r.floor === 'wood_warm') {
-        this.ctx.fillStyle = (r.floor === 'wood_dark') ? '#422a1d' : (r.floor === 'wood_warm') ? '#6b4226' : '#855230';
-        this.ctx.fillRect(r.x, r.y, r.w, r.h);
-        // Planks
-        this.ctx.strokeStyle = '#24160d';
-        this.ctx.lineWidth = 1;
-        for (let y = r.y; y < r.y + r.h; y += 16) {
-          this.ctx.beginPath();
-          this.ctx.moveTo(r.x, y);
-          this.ctx.lineTo(r.x + r.w, y);
-          this.ctx.stroke();
+    // 1. Draw Rooms with authentic Pokemon Perla textures!
+    VILLA_MAP.rooms.forEach(r => {
+      if (r.type === 'wood' || r.type === 'perla_room') {
+        if (this.pkmn.floor && this.pkmn.floor.complete) {
+          const pat = this.ctx.createPattern(this.pkmn.floor, 'repeat');
+          this.ctx.fillStyle = pat;
+        } else {
+          this.ctx.fillStyle = '#855230';
         }
-      } else if (r.floor === 'checkers') {
+        this.ctx.fillRect(r.x, r.y, r.w, r.h);
+      } else if (r.type === 'checkers') {
         const sz = 24;
         for (let y = r.y; y < r.y + r.h; y += sz) {
           for (let x = r.x; x < r.x + r.w; x += sz) {
@@ -1152,124 +1121,174 @@ class GameEngine {
             this.ctx.fillRect(x, y, sz, sz);
           }
         }
-      } else if (r.floor === 'tiles_blue') {
+      } else if (r.type === 'tiles') {
         this.ctx.fillStyle = '#1e3a8a';
         this.ctx.fillRect(r.x, r.y, r.w, r.h);
-      } else if (r.floor === 'stone_deck') {
+      } else if (r.type === 'stone') {
         this.ctx.fillStyle = '#334155';
         this.ctx.fillRect(r.x, r.y, r.w, r.h);
-      } else if (r.floor === 'grass') {
-        this.ctx.fillStyle = '#15803d';
-        this.ctx.fillRect(r.x, r.y, r.w, r.h);
       }
 
-      // Carpet
-      if (r.carpet) {
-        this.ctx.fillStyle = r.carpet.brd;
-        this.ctx.fillRect(r.carpet.x - 4, r.carpet.y - 4, r.carpet.w + 8, r.carpet.h + 8);
-        this.ctx.fillStyle = r.carpet.col;
-        this.ctx.fillRect(r.carpet.x, r.carpet.y, r.carpet.w, r.carpet.h);
-      }
+      // Room Name Tag
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      this.ctx.fillRect(r.x + 8, r.y + 6, r.name.length * 7 + 14, 18);
+      this.ctx.fillStyle = '#fef08a';
+      this.ctx.font = 'bold 10px monospace';
+      this.ctx.fillText(r.name.toUpperCase(), r.x + 14, r.y + 19);
     });
 
-    // Balcony Landscape (Mt. Coronet & Lake Verity)
-    const balc = HOUSE_DATA.rooms.find(rm => rm.id === 'balcony');
-    if (balc) {
-      const skyX = balc.x + balc.w - 130;
-      this.ctx.fillStyle = '#0f172a';
-      this.ctx.fillRect(skyX, balc.y, 130, balc.h);
-      // Mt Coronet
-      this.ctx.fillStyle = '#1e293b';
-      this.ctx.beginPath();
-      this.ctx.moveTo(skyX, balc.y + balc.h);
-      this.ctx.lineTo(skyX + 30, balc.y + 110);
-      this.ctx.lineTo(skyX + 65, balc.y + 60);
-      this.ctx.lineTo(skyX + 130, balc.y + 120);
-      this.ctx.lineTo(skyX + 130, balc.y + balc.h);
-      this.ctx.fill();
-      // Stars
-      this.ctx.fillStyle = '#fff';
-      for (let i = 0; i < 20; i++) {
-        const sx = skyX + 10 + (i * 31) % 110;
-        const sy = balc.y + 8 + (i * 29) % (balc.h - 60);
-        this.ctx.fillRect(sx, sy, 2, 2);
+    // 2. Camera Relax: EXACT Pokemon Perla Bedroom Furniture (from reference image!)
+    const bedRoom = VILLA_MAP.rooms.find(rm => rm.id === 'bedroom');
+    if (bedRoom) {
+      // Pokemon Bed
+      if (this.pkmn.bed && this.pkmn.bed.complete) {
+        this.ctx.drawImage(this.pkmn.bed, 920, 160, 50, 70);
+      }
+      // PC Desk
+      if (this.pkmn.pc_desk && this.pkmn.pc_desk.complete) {
+        this.ctx.drawImage(this.pkmn.pc_desk, 750, 60, 54, 70);
+      }
+      // TV with Wii Console
+      if (this.pkmn.tv && this.pkmn.tv.complete) {
+        this.ctx.drawImage(this.pkmn.tv, 820, 60, 70, 48);
+      }
+      // Stairs
+      if (this.pkmn.stairs && this.pkmn.stairs.complete) {
+        this.ctx.drawImage(this.pkmn.stairs, 910, 60, 70, 46);
+      }
+      // Pastel Pink & Yellow Rug in Center
+      if (this.pkmn.rug && this.pkmn.rug.complete) {
+        this.ctx.drawImage(this.pkmn.rug, 800, 140, 95, 60);
+      }
+      // Potted Ficus Plant
+      if (this.pkmn.plant && this.pkmn.plant.complete) {
+        this.ctx.drawImage(this.pkmn.plant, 750, 240, 26, 52);
       }
     }
 
-    // Furniture
-    HOUSE_DATA.furniture.forEach(f => {
-      if (f.type === 'dancefloor') {
-        this.ctx.fillStyle = '#7c3aed';
-        this.ctx.fillRect(f.x, f.y, f.w, f.h);
-        this.ctx.strokeStyle = '#fbbf24';
-        this.ctx.lineWidth = 2;
-        this.ctx.strokeRect(f.x, f.y, f.w, f.h);
-        this.ctx.fillStyle = '#fff';
-        this.ctx.font = 'bold 11px monospace';
-        this.ctx.fillText('🎶 PISTA DI CUORIPOLI 🎶', f.x + 14, f.y + f.h / 2);
-        return;
-      }
-      if (f.type === 'fridge') {
-        this.ctx.fillStyle = '#94a3b8';
-        this.ctx.fillRect(f.x, f.y, f.w, f.h);
-        this.ctx.fillStyle = '#334155';
-        this.ctx.fillRect(f.x, f.y + 24, f.w, 2);
-        this.ctx.fillStyle = '#fff';
-        this.ctx.font = '9px monospace';
-        this.ctx.fillText('FRIGO', f.x + 8, f.y + f.h - 8);
-      } else if (f.type === 'beer_pong') {
-        this.ctx.fillStyle = '#1e293b';
-        this.ctx.fillRect(f.x, f.y, f.w, f.h);
-        this.ctx.strokeStyle = '#fbbf24';
-        this.ctx.strokeRect(f.x, f.y, f.w, f.h);
-        this.ctx.fillStyle = '#fbbf24';
-        this.ctx.font = '10px monospace';
-        this.ctx.fillText('BEER PONG MS', f.x + 50, f.y + 42);
-      } else if (f.type === 'dj') {
-        this.ctx.fillStyle = '#3b0764';
-        this.ctx.fillRect(f.x, f.y, f.w, f.h);
-        this.ctx.strokeStyle = '#a855f7';
-        this.ctx.strokeRect(f.x, f.y, f.w, f.h);
-        this.ctx.fillStyle = '#fff';
-        this.ctx.font = '9px monospace';
-        this.ctx.fillText('DJ LOLLO', f.x + 44, f.y + f.h - 8);
-      } else if (f.type === 'bed') {
-        this.ctx.fillStyle = '#581c87';
-        this.ctx.fillRect(f.x, f.y, f.w, f.h);
-        this.ctx.fillStyle = '#f8fafc';
-        this.ctx.fillRect(f.x + 16, f.y + 12, 50, 32);
-        this.ctx.fillRect(f.x + 94, f.y + 12, 50, 32);
-      } else {
-        this.ctx.fillStyle = '#78350f';
-        this.ctx.fillRect(f.x, f.y, f.w, f.h);
-      }
+    // 3. Salone & Cucina Decor
+    // Salone Rug
+    if (this.pkmn.rug && this.pkmn.rug.complete) {
+      this.ctx.drawImage(this.pkmn.rug, 120, 560, 120, 76);
+    }
+    // Salone TV
+    if (this.pkmn.tv && this.pkmn.tv.complete) {
+      this.ctx.drawImage(this.pkmn.tv, 360, 560, 80, 55);
+    }
+    // Salone Plant
+    if (this.pkmn.plant && this.pkmn.plant.complete) {
+      this.ctx.drawImage(this.pkmn.plant, 450, 360, 30, 58);
+    }
 
-      if (f.isInteractive) {
-        this.ctx.fillStyle = '#facc15';
-        this.ctx.beginPath();
-        this.ctx.arc(f.x + f.w - 8, f.y + 8, 4, 0, Math.PI * 2);
-        this.ctx.fill();
-      }
-    });
+    // Hearthome Contest Dancefloor
+    this.ctx.fillStyle = '#7c3aed';
+    this.ctx.fillRect(230, 380, 180, 140);
+    this.ctx.strokeStyle = '#fbbf24';
+    this.ctx.lineWidth = 2;
+    this.ctx.strokeRect(230, 380, 180, 140);
+    this.ctx.fillStyle = '#fff';
+    this.ctx.font = 'bold 11px monospace';
+    this.ctx.fillText('🎶 PISTA DI CUORIPOLI 🎶', 244, 450);
 
-    // Walls
-    HOUSE_DATA.walls.forEach(w => {
+    // DJ Booth
+    this.ctx.fillStyle = '#3b0764';
+    this.ctx.fillRect(60, 370, 140, 60);
+    this.ctx.strokeStyle = '#a855f7';
+    this.ctx.strokeRect(60, 370, 140, 60);
+    this.ctx.fillStyle = '#fff';
+    this.ctx.font = '9px monospace';
+    this.ctx.fillText('DJ LOLLO (MS)', 90, 405);
+
+    // Beer Pong Table
+    this.ctx.fillStyle = '#1e293b';
+    this.ctx.fillRect(150, 160, 190, 70);
+    this.ctx.strokeStyle = '#fbbf24';
+    this.ctx.strokeRect(150, 160, 190, 70);
+    // Red Pokeball cups
+    this.ctx.fillStyle = '#ef4444';
+    for (let i = 0; i < 6; i++) {
+      this.ctx.beginPath();
+      this.ctx.arc(170 + (i % 3) * 14, 180 + Math.floor(i / 3) * 16, 5, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+    // Blue cups
+    this.ctx.fillStyle = '#3b82f6';
+    for (let i = 0; i < 6; i++) {
+      this.ctx.beginPath();
+      this.ctx.arc(300 + (i % 3) * 14, 180 + Math.floor(i / 3) * 16, 5, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+    this.ctx.fillStyle = '#fbbf24';
+    this.ctx.font = '10px monospace';
+    this.ctx.fillText('BEER PONG', 215, 200);
+
+    // Fridge
+    this.ctx.fillStyle = '#94a3b8';
+    this.ctx.fillRect(60, 70, 56, 60);
+    this.ctx.fillStyle = '#334155';
+    this.ctx.fillRect(60, 94, 56, 2);
+    this.ctx.fillStyle = '#fff';
+    this.ctx.font = '9px monospace';
+    this.ctx.fillText('FRIGO', 70, 120);
+
+    // Balcony Landscape (Mt. Coronet & Lake Verity)
+    const balc = VILLA_MAP.rooms.find(rm => rm.id === 'balcony');
+    if (balc) {
+      const skyX = balc.x + balc.w - 110;
+      this.ctx.fillStyle = '#0f172a';
+      this.ctx.fillRect(skyX, balc.y, 110, balc.h);
+      // Mt Coronet Peak
       this.ctx.fillStyle = '#1e293b';
+      this.ctx.beginPath();
+      this.ctx.moveTo(skyX, balc.y + balc.h);
+      this.ctx.lineTo(skyX + 25, balc.y + 70);
+      this.ctx.lineTo(skyX + 55, balc.y + 40);
+      this.ctx.lineTo(skyX + 110, balc.y + 90);
+      this.ctx.lineTo(skyX + 110, balc.y + balc.h);
+      this.ctx.fill();
+      // Stars
+      this.ctx.fillStyle = '#fff';
+      for (let i = 0; i < 16; i++) {
+        const sx = skyX + 8 + (i * 27) % 94;
+        const sy = balc.y + 6 + (i * 23) % (balc.h - 50);
+        this.ctx.fillRect(sx, sy, 2, 2);
+      }
+      // Wooden Bench
+      this.ctx.fillStyle = '#78350f';
+      this.ctx.fillRect(balc.x + 20, balc.y + 110, 80, 36);
+    }
+
+    // 4. Draw Walls (Wood paneling)
+    VILLA_MAP.walls.forEach(w => {
+      if (this.pkmn.wall && this.pkmn.wall.complete) {
+        const pat = this.ctx.createPattern(this.pkmn.wall, 'repeat');
+        this.ctx.fillStyle = pat;
+      } else {
+        this.ctx.fillStyle = '#cebe94';
+      }
       this.ctx.fillRect(w.x, w.y, w.w, w.h);
-      this.ctx.strokeStyle = '#0f172a';
+      this.ctx.strokeStyle = '#6b5a3e';
+      this.ctx.lineWidth = 1;
       this.ctx.strokeRect(w.x, w.y, w.w, w.h);
     });
 
-    // Doors
-    HOUSE_DATA.doors.forEach(d => {
-      this.ctx.fillStyle = d.isOpen ? '#059669' : '#78350f';
-      this.ctx.fillRect(d.x, d.y, d.w, d.h);
-      this.ctx.strokeStyle = d.isOpen ? '#34d399' : '#fef08a';
-      this.ctx.lineWidth = 2;
-      this.ctx.strokeRect(d.x, d.y, d.w, d.h);
-      this.ctx.fillStyle = '#fff';
-      this.ctx.font = '9px monospace';
-      this.ctx.fillText(d.isOpen ? 'APERTA' : 'CHIUSA', d.x + 1, d.y + d.h / 2);
+    // 5. Draw Wide Open Doorway Thresholds & Woven Mats
+    VILLA_MAP.doorways.forEach(d => {
+      // Doormat
+      this.ctx.fillStyle = d.matColor || '#cbd5e1';
+      this.ctx.fillRect(d.x - 4, d.y + 4, d.w + 8, d.h - 8);
+      this.ctx.strokeStyle = '#ffffff';
+      this.ctx.lineWidth = 1;
+      this.ctx.strokeRect(d.x - 4, d.y + 4, d.w + 8, d.h - 8);
+
+      if (d.isBarriered) {
+        // Red velvet barrier cord
+        this.ctx.fillStyle = '#dc2626';
+        this.ctx.fillRect(d.x, d.y, d.w, d.h);
+        this.ctx.fillStyle = '#fef08a';
+        this.ctx.font = 'bold 9px monospace';
+        this.ctx.fillText('BLOCCATA', d.x - 8, d.y + d.h / 2);
+      }
     });
   }
 
@@ -1286,7 +1305,6 @@ class GameEngine {
       this.ctx.fillRect(drawX, drawY, w, h);
     }
 
-    // Name tag
     const name = isPlayer ? 'Leon' : c.name;
     this.ctx.font = 'bold 10px monospace';
     const tw = this.ctx.measureText(name).width;
@@ -1295,7 +1313,6 @@ class GameEngine {
     this.ctx.fillStyle = (c.id === 'mari') ? '#f472b6' : isPlayer ? '#60a5fa' : (c.id === 'maya') ? '#ef4444' : '#fff';
     this.ctx.fillText(name, c.x - tw / 2, drawY - 4);
 
-    // Emotion bubble
     if (c.id === 'mari' && c.isFollowing) {
       this.ctx.font = '16px monospace';
       this.ctx.fillText('💖', c.x - 8, drawY - 18);
@@ -1316,13 +1333,15 @@ class GameEngine {
     const p = this.player;
     let tip = null;
 
-    // Check doors
-    for (const d of HOUSE_DATA.doors) {
-      const cx = d.x + d.w / 2;
-      const cy = d.y + d.h / 2;
-      if (Math.hypot(p.x - cx, p.y - cy) < 46) {
-        tip = `[E / Spazio] ${d.isOpen ? 'Chiudi' : 'Apri'} ${d.name}`;
-        break;
+    // Check Doorway Barrier Toggle (Bedroom & Balcony)
+    for (const d of VILLA_MAP.doorways) {
+      if (d.id === 'door_bedroom' || d.id === 'door_balcony') {
+        const cx = d.x + d.w / 2;
+        const cy = d.y + d.h / 2;
+        if (Math.hypot(p.x - cx, p.y - cy) < 48) {
+          tip = `[E / Spazio] ${d.isBarriered ? 'Togli Barriera' : 'Chiudi Barriera Privacy'}`;
+          break;
+        }
       }
     }
 
@@ -1334,6 +1353,11 @@ class GameEngine {
           break;
         }
       }
+    }
+
+    // Check Fridge
+    if (!tip && Math.hypot(p.x - 90, p.y - 100) < 55) {
+      tip = `[E / Spazio] Apri Frigorifero`;
     }
 
     if (tip) {
