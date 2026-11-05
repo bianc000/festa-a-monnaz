@@ -1,24 +1,21 @@
-// Main Game Engine & Controller for Festa a Monnaz
+// Main Game Engine & Controller for Festa a Monnaz (Pokemon Perla Edition)
 
 class Game {
   constructor() {
     this.canvas = document.getElementById('gameCanvas');
     this.ctx = this.canvas.getContext('2d');
     
-    // Set internal resolution (1200x900)
     this.canvas.width = 1200;
     this.canvas.height = 900;
 
     this.house = new House();
     this.characters = new CharacterManager(this.house);
     
-    // Input state
     this.keys = {};
     this.setupInput();
 
-    // Game Progression State
     this.state = {
-      mariInterest: 20, // starts at 20%
+      mariInterest: 20,
       mariFollowing: false,
       mariAloneWithLeon: false,
       djRomance: false,
@@ -32,24 +29,15 @@ class Game {
       aloneSeconds: 0
     };
 
-    // Romance alone countdown
     this.aloneTimer = 0;
     this.confessionTriggered = false;
-
-    // Camera / Viewport
-    this.camera = { x: 0, y: 0 };
-
-    // Notification toast timer
     this.toastTimer = null;
 
-    // Setup UI hooks
     this.setupUI();
 
-    // Start loop
     this.lastTime = performance.now();
     requestAnimationFrame((t) => this.loop(t));
 
-    // Welcome notification
     setTimeout(() => {
       this.showNotification("Festa a Monnaz! Trova la bella Mari e cerca di restare da solo con lei!");
     }, 1000);
@@ -59,17 +47,14 @@ class Game {
     window.addEventListener('keydown', (e) => {
       this.keys[e.code] = true;
 
-      // Interaction key: Space or KeyE
       if (e.code === 'Space' || e.code === 'KeyE') {
         this.handleInteract();
       }
 
-      // Close dialogue with Escape or Space if no choices
       if (e.code === 'Escape') {
         this.closeDialogue();
       }
 
-      // Quick numbers for dialogue choices (1, 2, 3)
       if (this.state.dialogueActive && (e.code === 'Digit1' || e.code === 'Digit2' || e.code === 'Digit3')) {
         const idx = parseInt(e.key) - 1;
         if (this.state.currentChoices && this.state.currentChoices[idx]) {
@@ -77,7 +62,6 @@ class Game {
         }
       }
 
-      // Quick hotkey to throw Bubi's chips if owned
       if (e.code === 'KeyQ' || e.code === 'KeyF') {
         this.useChips();
       }
@@ -87,7 +71,6 @@ class Game {
       this.keys[e.code] = false;
     });
 
-    // Mobile / Touch controls
     const bindTouch = (id, keyName) => {
       const el = document.getElementById(id);
       if (!el) return;
@@ -106,17 +89,15 @@ class Game {
   }
 
   setupUI() {
-    // Audio button
     const audioBtn = document.getElementById('audioBtn');
     if (audioBtn) {
       audioBtn.addEventListener('click', () => {
         const isMuted = window.soundSystem.toggleMute();
-        audioBtn.textContent = isMuted ? '🔇 Audio: OFF' : '🔊 Audio: ON';
+        audioBtn.textContent = isMuted ? '🔇 BGM: OFF' : '🔊 BGM Pokémon: ON';
         audioBtn.classList.toggle('btn-pink', !isMuted);
       });
     }
 
-    // Sprites Modal toggle
     const spritesBtn = document.getElementById('spritesBtn');
     const spritesModal = document.getElementById('spritesModal');
     const closeModalBtn = document.getElementById('closeModalBtn');
@@ -130,7 +111,6 @@ class Game {
       });
     }
 
-    // Click inventory slots to use/drop
     const slot3 = document.getElementById('slot3');
     if (slot3) {
       slot3.style.cursor = 'pointer';
@@ -141,7 +121,6 @@ class Game {
       });
     }
 
-    // First user click to enable audio
     window.addEventListener('click', () => {
       window.soundSystem.init();
       if (!window.soundSystem.musicPlaying && !window.soundSystem.isMuted) {
@@ -152,7 +131,6 @@ class Game {
 
   handleInteract() {
     if (this.state.dialogueActive) {
-      // If prompt has choices, do nothing until choice is clicked
       if (!this.state.currentChoices || this.state.currentChoices.length === 0) {
         this.closeDialogue();
       }
@@ -161,7 +139,7 @@ class Game {
 
     const p = this.characters.player;
 
-    // 1. Check nearby door first if close (so player can close doors when fleeing or alone!)
+    // 1. Check nearby doors first
     const interactiveDoor = this.house.getInteractiveNear(p.x, p.y, 45);
     if (interactiveDoor && interactiveDoor.type === 'door') {
       const door = interactiveDoor.item;
@@ -178,7 +156,7 @@ class Game {
       return;
     }
 
-    // 3. Check nearby interactive furniture
+    // 3. Check interactive furniture
     if (interactiveDoor && interactiveDoor.type === 'furniture') {
       this.handleFurnitureAction(interactiveDoor.item);
       return;
@@ -197,19 +175,19 @@ class Game {
         this.updateInventoryUI();
         this.showNotification("Hai preso dal frigo: 'Birra Gelata' per Lollo! 🍺");
       } else {
-        this.showNotification("Il frigo di Kri è pieno di ghiaccio e bottiglie.");
+        this.showNotification("Il frigo di Kri è pieno di bibite e Poffin artigianali.");
       }
     } else if (f.action === 'dj_booth') {
       this.openDialogue('lollo');
     } else if (f.action === 'beer_pong') {
       window.soundSystem.playBlip();
-      this.showNotification("Matti e Jelmo stanno disputando una finale agguerrita di Beer Pong!");
+      this.showNotification("Matti e Jelmo stanno disputando una finale agguerrita di Beer Pong Pokéball!");
     } else if (f.action === 'guitar') {
       window.soundSystem.playHeart();
-      this.showNotification("Una chitarra classica appoggiata al muro. Atmosfera romantica e intima.");
+      this.showNotification("Una chitarra classica di Cuoripoli. Atmosfera romantica e intima.");
     } else if (f.action === 'telescope') {
       window.soundSystem.playBlip();
-      this.showNotification("Guardando attraverso il telescopio si vedono le luci soffuse del villaggio di Monnaz.");
+      this.showNotification("Attraverso il telescopio si scorgono le acque scintillanti del Lago Verità!");
     }
   }
 
@@ -227,6 +205,15 @@ class Game {
     }
   }
 
+  triggerPokemonTrainerSpot(trainerName, message) {
+    const flash = document.getElementById('pokemonFlash');
+    if (flash) {
+      flash.classList.add('active');
+      setTimeout(() => flash.classList.remove('active'), 250);
+    }
+    this.showNotification(message);
+  }
+
   openDialogue(speakerId) {
     const data = DIALOGUES[speakerId];
     if (!data) return;
@@ -236,27 +223,32 @@ class Game {
     window.soundSystem.playSelect();
 
     const overlay = document.getElementById('dialogueOverlay');
-    const avatarImg = document.getElementById('dialogueAvatar');
+    const cutinLayer = document.getElementById('trainerCutinLayer');
+    const leonImg = document.getElementById('trainerPortraitLeon');
+    const mariImg = document.getElementById('trainerPortraitMari');
     const nameEl = document.getElementById('dialogueName');
     const textEl = document.getElementById('dialogueText');
     const choicesEl = document.getElementById('dialogueChoices');
 
     overlay.classList.remove('hidden');
-    avatarImg.src = `assets/sprites/${data.avatar}.png`;
+
+    // Show Trainer Battle Portraits if talking with Mari or in romantic mode
+    if (speakerId === 'mari' || this.state.mariAloneWithLeon) {
+      cutinLayer.style.display = 'flex';
+      leonImg.style.display = 'block';
+      mariImg.style.display = 'block';
+    } else {
+      cutinLayer.style.display = 'none';
+    }
+
     nameEl.textContent = `${data.speaker} - ${data.title || ''}`;
 
-    // Compute dialogue text and dynamic choices
     let introText = (typeof data.intro === 'function') ? data.intro(this.state) : (data.intro || '');
-    if (data.getIntro) {
-      introText = data.getIntro(this.state);
-    }
+    if (data.getIntro) introText = data.getIntro(this.state);
     textEl.textContent = introText;
 
-    // Get choices
     let choices = (typeof data.choices === 'function') ? data.choices(this.state) : (data.choices || []);
-    if (data.getChoices) {
-      choices = data.getChoices(this.state);
-    }
+    if (data.getChoices) choices = data.getChoices(this.state);
     this.state.currentChoices = choices;
 
     choicesEl.innerHTML = '';
@@ -277,12 +269,10 @@ class Game {
     const textEl = document.getElementById('dialogueText');
     const choicesEl = document.getElementById('dialogueChoices');
 
-    // Show reply
     textEl.textContent = choice.reply;
-    choicesEl.innerHTML = '<span class="dialogue-prompt">[Premi Spazio o Invio per continuare]</span>';
+    choicesEl.innerHTML = '<span style="font-size:12px; color:#64748b; font-weight:bold;">[Premi Spazio o Invio per continuare]</span>';
     this.state.currentChoices = [];
 
-    // Handle effects & rewards
     if (choice.bonus) {
       this.state.mariInterest = Math.min(100, this.state.mariInterest + choice.bonus);
       this.updateHud();
@@ -302,7 +292,7 @@ class Game {
       const mari = this.characters.getNpc('mari');
       if (mari) mari.isFollowing = true;
       window.soundSystem.playHeart();
-      this.showNotification("❤️ Mari ti sta seguendo! Portala in una stanza tranquilla senza farti beccare!");
+      this.showNotification("❤️ Mari ti sta seguendo! Portala in una stanza appartata senza farti beccare!");
     } else if (choice.action === 'give_chips') {
       if (!this.state.inventory.includes('chips_bubi')) {
         this.state.inventory.push('chips_bubi');
@@ -318,7 +308,7 @@ class Game {
       const maya = this.characters.getNpc('maya');
       if (maya) {
         maya.state = 'distracted';
-        maya.distractTimer = 400;
+        maya.distractTimer = 420;
         this.closeDialogue();
         this.showNotification("Maya è occupata a divorare le patatine!");
       }
@@ -327,19 +317,9 @@ class Game {
 
   triggerMayaClingDialogue() {
     this.state.mayaDodges++;
-    const overlay = document.getElementById('dialogueOverlay');
-    const avatarImg = document.getElementById('dialogueAvatar');
-    const nameEl = document.getElementById('dialogueName');
+    this.openDialogue('maya');
     const textEl = document.getElementById('dialogueText');
-    const choicesEl = document.getElementById('dialogueChoices');
-
-    this.state.dialogueActive = true;
-    overlay.classList.remove('hidden');
-    avatarImg.src = `assets/sprites/maya.png`;
-    nameEl.textContent = "Maya - L'incubo di Monnaz 👓";
-    textEl.textContent = "LEON! Non mi scappi! Ti ho visto che guardavi Mari, ma lei non capisce il nostro legame cosmico! Ascolta questa storia sul mio pappagallo...";
-    choicesEl.innerHTML = '<span class="dialogue-prompt" style="color:#ef4444;">[Maya ti sta bloccando per qualche secondo! Aspetta di liberarti!]</span>';
-    this.state.currentChoices = [];
+    textEl.textContent = "MAYA: LEON! Non mi scappi! Ho fatto il test di affinità di Sinnoh e siamo compatibili al 99%! Ti devo raccontare di quella volta che ho sfidato un Bidoof!";
   }
 
   triggerMayaInterruptDialogue() {
@@ -347,7 +327,7 @@ class Game {
     this.updateHud();
     this.openDialogue('maya');
     const textEl = document.getElementById('dialogueText');
-    textEl.textContent = "MAYA: Leon! Eccoti! Sei con Mari?! \nMARI: Oh cielo... Leon, vi lascio tranquilli, torno dagli altri nel salone!";
+    textEl.textContent = "MAYA: Leon! Ti ho beccato! Cosa fai con Mari?! \nMARI: Oh cielo... Leon, vi lascio tranquilli, torno dagli altri nel salone!";
   }
 
   closeDialogue() {
@@ -368,7 +348,6 @@ class Game {
   }
 
   updateHud() {
-    // Mari meter
     const fillEl = document.getElementById('meterFill');
     const valEl = document.getElementById('meterVal');
     if (fillEl && valEl) {
@@ -376,15 +355,11 @@ class Game {
       valEl.textContent = `${this.state.mariInterest}%`;
     }
 
-    // Current room
     const p = this.characters.player;
     const room = this.house.getRoomAt(p.x, p.y);
     const roomEl = document.getElementById('currentRoomText');
-    if (roomEl) {
-      roomEl.textContent = room.name;
-    }
+    if (roomEl) roomEl.textContent = room.name;
 
-    // Maya radar status
     const maya = this.characters.getNpc('maya');
     const mayaStatusEl = document.getElementById('mayaStatusText');
     if (maya && mayaStatusEl) {
@@ -392,15 +367,15 @@ class Game {
       if (maya.state === 'cling') {
         mayaStatusEl.className = 'maya-status maya-alert';
         mayaStatusEl.textContent = '🚨 BLOCCATO DA MAYA!';
-      } else if (maya.state === 'chase' || dist < 190) {
+      } else if (maya.state === 'chase' || dist < 200) {
         mayaStatusEl.className = 'maya-status maya-warning';
         mayaStatusEl.textContent = '⚠️ MAYA TI INSEGUE!';
       } else if (maya.state === 'distracted') {
         mayaStatusEl.className = 'maya-status maya-safe';
-        mayaStatusEl.textContent = '🍟 Maya distratta dalle patatine';
+        mayaStatusEl.textContent = '🍟 Maya distratta da patatine';
       } else {
         mayaStatusEl.className = 'maya-status maya-safe';
-        mayaStatusEl.textContent = '🟢 Nessun pericolo immediato';
+        mayaStatusEl.textContent = '🟢 Nessun pericolo';
       }
     }
   }
@@ -440,18 +415,15 @@ class Game {
 
     const p = this.characters.player;
     const mari = this.characters.getNpc('mari');
-    const maya = this.characters.getNpc('maya');
 
     if (!mari || !mari.isFollowing) return;
 
     const currentRoom = this.house.getRoomAt(p.x, p.y);
     const mariRoom = this.house.getRoomAt(mari.x, mari.y);
 
-    // Eligible private rooms: 'balcony' or 'bedroom'
     const isPrivate = (currentRoom.id === 'balcony' || currentRoom.id === 'bedroom');
 
     if (isPrivate && currentRoom.id === mariRoom.id) {
-      // Check if ANY other NPC is in this room
       let intruderFound = false;
       for (const npc of this.characters.npcs) {
         if (npc.id !== 'mari' && npc.room === currentRoom.id) {
@@ -461,13 +433,10 @@ class Game {
       }
 
       if (!intruderFound) {
-        // Leon and Mari are strictly alone!
         this.aloneTimer++;
-
-        // Shift background music to romantic mode
         window.soundSystem.setRomantic(true);
 
-        if (this.aloneTimer > 180 && !this.confessionTriggered) { // ~3 seconds uninterrupted
+        if (this.aloneTimer > 180 && !this.confessionTriggered) {
           this.triggerRomanticClimax(currentRoom);
         }
       } else {
@@ -486,20 +455,20 @@ class Game {
     this.state.mariAloneWithLeon = true;
     window.soundSystem.playVictory();
 
-    // Trigger Final Romantic Dialogue
     const overlay = document.getElementById('dialogueOverlay');
-    const avatarImg = document.getElementById('dialogueAvatar');
+    const cutinLayer = document.getElementById('trainerCutinLayer');
     const nameEl = document.getElementById('dialogueName');
     const textEl = document.getElementById('dialogueText');
     const choicesEl = document.getElementById('dialogueChoices');
 
     this.state.dialogueActive = true;
     overlay.classList.remove('hidden');
-    avatarImg.src = `assets/sprites/mari.png`;
+    cutinLayer.style.display = 'flex';
+
     nameEl.textContent = 'Mari ❤️ La più bella di MS';
     
-    const locationName = (room.id === 'balcony') ? 'sul balcone panoramico di Monnaz' : 'nella quiete della stanza';
-    textEl.textContent = `Mari: "Leon... guardaci. Finalmente da soli ${locationName}. La vista è magica, ma tu sei stato incredibile stasera. Sei riuscito a seminarli tutti... per me."`;
+    const locationName = (room.id === 'balcony') ? 'sul balcone con vista sul Lago Verità' : 'nella quiete della stanza';
+    textEl.textContent = `Mari: "Leon... guardaci. Finalmente da soli ${locationName}. La notte è magica, ma tu sei stato incredibile stasera. Sei riuscito a seminarli tutti... per me."`;
 
     choicesEl.innerHTML = `
       <button class="choice-btn" id="kissBtn">
@@ -524,16 +493,20 @@ class Game {
     const elapsedSecs = Math.round((Date.now() - this.state.startTime) / 1000);
     body.innerHTML = `
       <div style="text-align: center; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
-        <div style="font-size: 54px; animation: pulse 1s infinite;">💖 💑 🥂</div>
+        <div style="display: flex; gap: 20px; justify-content: center; align-items: flex-end;">
+          <img src="assets/sprites/leon_portrait.png" style="height: 160px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
+          <div style="font-size: 48px; animation: pulse 1s infinite;">💖</div>
+          <img src="assets/sprites/mari_portrait.png" style="height: 160px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
+        </div>
         <h2 style="color: #f472b6; font-size: 22px;">Missione Compiuta alla Festa di Monnaz!</h2>
         <p style="font-size: 14px; line-height: 1.6; max-width: 600px; color: #e2e8f0;">
-          Leon e la bella Mari sono rimasti da soli sotto il cielo stellato di Monnaz! Tutta la crew di <strong>MS</strong> (Kri, Ento, Matti, Jona, Pibe, Lollo, Roby, Lindi, Bubi, Jelmo e Ara) sta applaudendo dalla finestra, mentre Maya sta ancora cercando Leon per il corridoio!
+          Leon e la bella Mari sono rimasti da soli sotto il cielo stellato di Monnaz! Tutta la crew di <strong>MS</strong> sta applaudendo dalla finestra, mentre Maya sta ancora cercando Leon per il corridoio!
         </p>
-        <div style="background: #1e293b; padding: 14px 24px; border-radius: 8px; border: 1px solid #3b82f6; text-align: left; width: 100%; max-width: 440px;">
+        <div style="background: #1e293b; padding: 14px 24px; border-radius: 8px; border: 2px solid #38bdf8; text-align: left; width: 100%; max-width: 440px;">
           <div style="margin-bottom: 6px;">⏱️ <strong>Tempo impiegato:</strong> ${elapsedSecs} secondi</div>
           <div style="margin-bottom: 6px;">👓 <strong>Ostacolo Maya schivato con successo!</strong></div>
           <div style="margin-bottom: 6px;">🍸 <strong>Cocktail di Kri servito a perfezione!</strong></div>
-          <div style="color: #fbbf24;">🏆 <strong>Titolo sbloccato:</strong> Il Conquistatore di Monnaz</div>
+          <div style="color: #fbbf24;">🏆 <strong>Titolo sbloccato:</strong> Campione di Sinnoh & Conquistatore di Monnaz</div>
         </div>
         <button class="btn btn-pink" style="font-size: 14px; padding: 10px 20px; margin-top: 10px;" onclick="location.reload()">
           🔄 Gioca di Nuovo
@@ -546,28 +519,28 @@ class Game {
   populateSpritesModal() {
     const title = document.getElementById('modalTitle');
     const body = document.getElementById('modalBody');
-    title.textContent = '👥 Membri MS & Personaggi della Festa a Monnaz';
+    title.textContent = '👥 Membri MS & Sprite Ufficiali Pokémon Perla';
 
     const chars = [
-      { id: 'leon', name: 'Leon', role: 'Protagonista Giocabile (MS)', desc: 'Determinato a conquistare Mari stasera.' },
-      { id: 'mari', name: 'Mari', role: 'La più bella di MS ❤️', desc: 'Elegante, simpatica e radiosa in abito rosa.' },
-      { id: 'kri', name: 'Kri', role: 'Padrone di Casa (MS)', desc: 'Ospita la leggendaria festa a Monnaz.' },
-      { id: 'maya', name: 'Maya', role: 'L\'Ostacolo Principale 👓', desc: 'Insegue Leon ovunque con il suo maglione a pois!' },
-      { id: 'ento', name: 'Ento', role: 'Membro MS', desc: 'Chill hoodie verde e consigli strategici.' },
-      { id: 'matti', name: 'Matti', role: 'Membro MS', desc: 'Party animal con occhiali da sole e re del beer pong.' },
-      { id: 'jona', name: 'Jona', role: 'Membro MS', desc: 'Tall & cool in polo blu scuro.' },
-      { id: 'pibe', name: 'Pibe', role: 'Membro MS', desc: 'Bomber in maglia albiceleste, esperto di dribbling.' },
-      { id: 'lollo', name: 'Lollo', role: 'DJ di MS 🎧', desc: 'Controlla la consolle del salone.' },
-      { id: 'roby', name: 'Roby', role: 'Membro MS', desc: 'Amico fidato in verde smeraldo.' },
-      { id: 'lindi', name: 'Lindi', role: 'Membro MS', desc: 'Chic ed elegante, amica fidata di Mari.' },
-      { id: 'bubi', name: 'Bubi', role: 'Membro MS', desc: 'Fornitore ufficiale di patatine al tartufo.' },
-      { id: 'jelmo', name: 'Jelmo', role: 'Membro MS', desc: 'Mente analitica e calcolo delle traiettorie.' },
-      { id: 'ara', name: 'Ara', role: 'Membro MS', desc: 'Sorriso solare e vestito pesca corallo.' }
+      { id: 'leon', name: 'Leon', role: 'Protagonista Giocabile (MS)', desc: 'T-shirt Vitality nera e riccioli castani. Determinato a conquistare Mari.' },
+      { id: 'mari', name: 'Mari', role: 'La più bella di MS ❤️', desc: 'Abito viola elegante e capelli ondulati. Obiettivo romantico del gioco.' },
+      { id: 'kri', name: 'Kri', role: 'Padrone di Casa & Barman', desc: 'Ospita la leggendaria festa nella villa di Monnaz.' },
+      { id: 'maya', name: 'Maya', role: 'Festaiola Ostacolo 👓', desc: 'Insegue Leon con il suo maglione a pois fosforescenti!' },
+      { id: 'ento', name: 'Ento', role: 'Asso Allenatore MS', desc: 'Hoodie verde e consigli tattici per seminare Maya.' },
+      { id: 'matti', name: 'Matti', role: 'Campione Beer Pong Sinnoh', desc: 'Occhiali da sole e re dei bicchieri Pokéball.' },
+      { id: 'jona', name: 'Jona', role: 'Allenatore MS', desc: 'Polo blu navy nei pressi del corridoio.' },
+      { id: 'pibe', name: 'Pibe', role: 'Bomber di Sinnoh ⚽', desc: 'Maglia albiceleste e dribbling su Maya.' },
+      { id: 'lollo', name: 'Lollo', role: 'DJ Resident Cuoripoli 🎧', desc: 'In consolle per lanciare la traccia lenta romantica.' },
+      { id: 'roby', name: 'Roby', role: 'Amico di Sinnoh 💚', desc: 'Verde smeraldo, fa il tifo per Leon.' },
+      { id: 'lindi', name: 'Lindi', role: 'Amica di Mari ✨', desc: 'Chic ed elegante, ti svela cosa piace a Mari.' },
+      { id: 'bubi', name: 'Bubi', role: 'Maestro Poffin & Snack 🍟', desc: 'Fornisce le patatine al tartufo per distrarre Maya!' },
+      { id: 'jelmo', name: 'Jelmo', role: 'Scienziato Pokémon MS 📊', desc: 'Calcola le traiettorie di sicurezza della villa.' },
+      { id: 'ara', name: 'Ara', role: 'Fanciulla delle Feste 🌸', desc: 'Vestito pesca corallo, sorridente nel giardino.' }
     ];
 
     let gridHtml = `
       <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">
-        💡 <em>Tutti gli sprite sono salvati in <code>assets/sprites/</code>. Puoi sostituire ogni file PNG in qualsiasi momento con le tue immagini personalizzate e compariranno subito nel gioco!</em>
+        🎮 <em>Sprite ufficiali in stile Pokémon Perla (Gen 4). I ritratti originali di Leon e Mari sono attivi nei dialoghi!</em>
       </div>
       <div class="sprites-grid">
     `;
@@ -592,17 +565,15 @@ class Game {
     const dt = currentTime - this.lastTime;
     this.lastTime = currentTime;
 
-    // Update
     this.characters.update(this.keys, this.state);
     this.checkWinCondition();
     this.updateHud();
 
-    // Render
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.house.render(this.ctx);
     this.characters.render(this.ctx);
 
-    // Render interaction prompt tooltip if near something
+    // Interaction prompt tooltip
     if (!this.state.dialogueActive && !this.state.gameWon) {
       const p = this.characters.player;
       let promptText = null;
@@ -623,23 +594,23 @@ class Game {
         this.ctx.font = 'bold 12px "Courier New", monospace';
         const tw = this.ctx.measureText(promptText).width;
         this.ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
-        this.ctx.fillRect(p.x - tw / 2 - 8, p.y - 44, tw + 16, 22);
+        this.ctx.fillRect(p.x - tw / 2 - 8, p.y - 48, tw + 16, 22);
         this.ctx.strokeStyle = '#38bdf8';
         this.ctx.lineWidth = 1;
-        this.ctx.strokeRect(p.x - tw / 2 - 8, p.y - 44, tw + 16, 22);
+        this.ctx.strokeRect(p.x - tw / 2 - 8, p.y - 48, tw + 16, 22);
 
-        this.ctx.fillStyle = '#facc15';
-        this.ctx.fillText(promptText, p.x - tw / 2, p.y - 29);
+        this.ctx.fillStyle = '#fef08a';
+        this.ctx.fillText(promptText, p.x - tw / 2, p.y - 33);
       }
     }
 
-    // Alone romance overlay effect
+    // Romance alone overlay
     if (this.aloneTimer > 0) {
-      const alpha = Math.min(0.35, this.aloneTimer / 250);
+      const alpha = Math.min(0.4, this.aloneTimer / 240);
       this.ctx.fillStyle = `rgba(236, 72, 153, ${alpha})`;
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-      this.ctx.fillStyle = '#fff';
+      this.ctx.fillStyle = '#ffffff';
       this.ctx.font = 'bold 20px monospace';
       this.ctx.fillText(`✨ MOMENTO ROMANTICO: DA SOLI CON MARI! (${Math.ceil((180 - this.aloneTimer) / 60)}s) ✨`, 260, 40);
     }
@@ -648,7 +619,6 @@ class Game {
   }
 }
 
-// Instantiate on window load
 window.addEventListener('DOMContentLoaded', () => {
   window.game = new Game();
 });

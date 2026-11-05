@@ -1,11 +1,12 @@
-// Web Audio API Retro Sound System
+// Pokemon Perla (Sinnoh) Web Audio Chiptune Synthesizer
+
 class SoundSystem {
   constructor() {
     this.ctx = null;
     this.isMuted = false;
     this.musicPlaying = false;
     this.bgmTimer = null;
-    this.tempo = 124; // Party BPM
+    this.tempo = 120;
     this.step = 0;
     this.isRomanticMode = false;
   }
@@ -47,80 +48,88 @@ class SoundSystem {
     } catch(e) {}
   }
 
+  // Pokemon DS text typing blip
   playBlip() {
-    this.playTone(480, 'triangle', 0.05, 0.08);
+    this.playTone(520, 'square', 0.04, 0.04);
   }
 
   playSelect() {
-    this.playTone(660, 'sine', 0.08, 0.1);
+    this.playTone(740, 'triangle', 0.06, 0.08);
   }
 
-  playAlert() {
-    // Metal-gear style / cartoon exclamation mark
+  // Classic Pokemon Trainer Spotted Encounter Sting! (Dun-dun-DUN!)
+  playPokemonEncounter() {
     if (this.isMuted) return;
     this.init();
     try {
       const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(320, now);
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
-      gain.gain.setValueAtTime(0.25, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start();
-      osc.stop(now + 0.25);
-    } catch(e) {}
-  }
-
-  playMayaCatch() {
-    // Funny descending trombone / cringe sound
-    if (this.isMuted) return;
-    this.init();
-    try {
-      const now = this.ctx.currentTime;
-      const notes = [300, 280, 260, 220];
-      notes.forEach((freq, idx) => {
+      const notes = [
+        { f: 440, t: 0.0, d: 0.1 },
+        { f: 554.37, t: 0.09, d: 0.1 },
+        { f: 659.25, t: 0.18, d: 0.1 },
+        { f: 880, t: 0.27, d: 0.35 }
+      ];
+      notes.forEach(n => {
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.12);
-        gain.gain.setValueAtTime(0.18, now + idx * 0.12);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + (idx + 1) * 0.12);
+        osc.frequency.setValueAtTime(n.f, now + n.t);
+        gain.gain.setValueAtTime(0.22, now + n.t);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
-        osc.start(now + idx * 0.12);
-        osc.stop(now + (idx + 1) * 0.12);
+        osc.start(now + n.t);
+        osc.stop(now + n.t + n.d);
       });
     } catch(e) {}
   }
 
-  playHeart() {
-    // Sweet ascending chime
+  playMayaCatch() {
     if (this.isMuted) return;
     this.init();
     try {
       const now = this.ctx.currentTime;
-      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      const notes = [320, 290, 260, 200];
       notes.forEach((freq, idx) => {
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-        gain.gain.setValueAtTime(0.15, now + idx * 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 0.3);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+        gain.gain.setValueAtTime(0.18, now + idx * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + (idx + 1) * 0.1);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now + idx * 0.1);
+        osc.stop(now + (idx + 1) * 0.1);
+      });
+    } catch(e) {}
+  }
+
+  // Pokemon Level-Up / Love Affection Chime
+  playHeart() {
+    if (this.isMuted) return;
+    this.init();
+    try {
+      const now = this.ctx.currentTime;
+      // Pokemon Level-Up jingle notes (G4, C5, E5, G5, C6)
+      const notes = [392.00, 523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((f, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, now + idx * 0.08);
+        gain.gain.setValueAtTime(0.16, now + idx * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 0.35);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now + idx * 0.08);
-        osc.stop(now + idx * 0.08 + 0.3);
+        osc.stop(now + idx * 0.08 + 0.35);
       });
     } catch(e) {}
   }
 
   playDoor() {
-    this.playTone(180, 'square', 0.1, 0.1);
+    this.playTone(220, 'square', 0.08, 0.08);
   }
 
   playPickup() {
@@ -128,40 +137,46 @@ class SoundSystem {
     this.init();
     try {
       const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(440, now);
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
-      gain.gain.setValueAtTime(0.15, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start();
-      osc.stop(now + 0.2);
+      // Pokemon Item Get fanfare!
+      const notes = [587.33, 880, 783.99, 1174.66];
+      notes.forEach((f, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, now + idx * 0.09);
+        gain.gain.setValueAtTime(0.18, now + idx * 0.09);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.09 + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now + idx * 0.09);
+        osc.stop(now + idx * 0.09 + 0.25);
+      });
     } catch(e) {}
   }
 
+  // Pokemon Sinnoh Battle Victory Fanfare!
   playVictory() {
     if (this.isMuted) return;
     this.init();
     try {
       const now = this.ctx.currentTime;
-      // Grand victory fanfare
-      const melody = [
-        { f: 523.25, d: 0.15, t: 0.0 },
-        { f: 659.25, d: 0.15, t: 0.15 },
-        { f: 783.99, d: 0.15, t: 0.30 },
-        { f: 1046.5, d: 0.45, t: 0.45 },
-        { f: 880.00, d: 0.20, t: 0.90 },
-        { f: 1046.5, d: 0.80, t: 1.10 }
+      const fanfare = [
+        { f: 523.25, d: 0.12, t: 0.0 },
+        { f: 523.25, d: 0.12, t: 0.12 },
+        { f: 523.25, d: 0.12, t: 0.24 },
+        { f: 523.25, d: 0.28, t: 0.36 },
+        { f: 415.30, d: 0.28, t: 0.64 },
+        { f: 466.16, d: 0.28, t: 0.92 },
+        { f: 523.25, d: 0.50, t: 1.20 },
+        { f: 466.16, d: 0.18, t: 1.70 },
+        { f: 523.25, d: 0.80, t: 1.88 }
       ];
-      melody.forEach(n => {
+      fanfare.forEach(n => {
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(n.f, now + n.t);
-        gain.gain.setValueAtTime(0.2, now + n.t);
+        gain.gain.setValueAtTime(0.22, now + n.t);
         gain.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
@@ -175,7 +190,7 @@ class SoundSystem {
     if (this.musicPlaying || this.isMuted) return;
     this.musicPlaying = true;
     this.step = 0;
-    const intervalMs = (60 / this.tempo) * 1000 / 4; // 16th note steps
+    const intervalMs = (60 / this.tempo) * 1000 / 4;
 
     this.bgmTimer = setInterval(() => {
       if (!this.musicPlaying || this.isMuted) return;
@@ -197,59 +212,59 @@ class SoundSystem {
     const now = this.ctx.currentTime;
 
     if (this.isRomanticMode) {
-      // Gentle romantic arpeggios
-      const romanticNotes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 440.00, 523.25];
+      // Pokemon Sinnoh Route 209 Night / Hearthome Night gentle arpeggios
+      const sinnohNight = [329.63, 392.00, 493.88, 587.33, 493.88, 392.00, 440.00, 523.25];
       if (this.step % 2 === 0) {
-        const noteIdx = (this.step / 2) % romanticNotes.length;
+        const nIdx = (this.step / 2) % sinnohNight.length;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(romanticNotes[noteIdx], now);
+        osc.frequency.setValueAtTime(sinnohNight[nIdx], now);
         gain.gain.setValueAtTime(0.06, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.35);
+        osc.stop(now + 0.38);
       }
       return;
     }
 
-    // Party Bassline & Beat
+    // Sinnoh Party BGM
     // Kick on 0, 4, 8, 12
     if (this.step % 4 === 0) {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(110, now);
-      osc.frequency.exponentialRampToValueAtTime(35, now + 0.1);
+      osc.frequency.setValueAtTime(120, now);
+      osc.frequency.exponentialRampToValueAtTime(38, now + 0.1);
       gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.12);
+      osc.stop(now + 0.1);
     }
 
-    // Hi-hat on 2, 6, 10, 14 (off-beat)
+    // Hi-hat
     if (this.step % 2 === 1) {
-      this.playTone(1200 + Math.random() * 800, 'square', 0.02, 0.02);
+      this.playTone(1400, 'square', 0.02, 0.02);
     }
 
-    // Funky synth bassline
-    const bassNotes = [110, 110, 130.8, 110, 146.8, 130.8, 164.8, 130.8];
+    // Bassline
+    const bass = [110, 110, 130.8, 110, 146.8, 130.8, 164.8, 130.8];
     if (this.step % 2 === 0) {
-      const nIdx = Math.floor(this.step / 2) % bassNotes.length;
+      const nIdx = Math.floor(this.step / 2) % bass.length;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(bassNotes[nIdx], now);
+      osc.frequency.setValueAtTime(bass[nIdx], now);
       gain.gain.setValueAtTime(0.06, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.15);
+      osc.stop(now + 0.14);
     }
   }
 

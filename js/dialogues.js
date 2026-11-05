@@ -72,12 +72,12 @@ const DIALOGUES = {
 
       const choices = [
         {
-          text: "Mari, sei incantevole stasera. Questo vestito rosa spicca su tutta la festa.",
+          text: "Mari, sei incantevole stasera. Questo vestito viola e magenta spicca su tutta la festa.",
           bonus: 25,
-          reply: "Grazie Leon! Sei sempre un vero gentiluomo, mi fa molto piacere sentirtelo dire."
+          reply: "Grazie Leon! Sei sempre un vero gentiluomo, e quella maglietta Vitality ti sta davvero bene."
         },
         {
-          text: "Leon & Mari: la coppia dell'anno a MS, che ne pensi?",
+          text: "Leon & Mari: la coppia più forte di Sinnoh e di MS, che ne pensi?",
           bonus: 20,
           reply: "Ahaha che sfacciato! Però ammetto che hai stile e mi fai ridere."
         }

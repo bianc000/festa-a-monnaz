@@ -3,42 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Leon: Fuoco a Monnaz | Conquista la bella Mari</title>
+  <title>Leon & la bella Mari: Notte a Monnaz (Edizione Pokémon Perla)</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Pokemon Pearl Header -->
   <header>
     <div class="logo-area">
-      <div class="logo-icon">🔥</div>
+      <div class="pokeball-icon">🔴</div>
       <div>
-        <h1>LEON: FUOCO A MONNAZ</h1>
-        <div class="subtitle">La festa di Kri a Monnaz • Conquista la bella Mari & Semina Maya!</div>
+        <h1>LEON & LA BELLA MARI</h1>
+        <div class="subtitle">Festa a Monnaz a casa di Kri • Stile Pokémon Perla (Sinnoh)</div>
       </div>
     </div>
     <div class="header-buttons">
-      <button id="spritesBtn" class="btn">👥 Personaggi & Sprite</button>
-      <button id="audioBtn" class="btn btn-pink">🔊 Audio: ON</button>
+      <button id="spritesBtn" class="btn">👥 Scheda Personaggi MS</button>
+      <button id="audioBtn" class="btn btn-pink">🔊 BGM Pokémon: ON</button>
     </div>
   </header>
 
-  <!-- HUD Status Bar -->
+  <!-- Poketch HUD Status Bar -->
   <div class="hud-container">
     <!-- Current Room -->
     <div class="hud-card">
       <div class="hud-title">
-        <span>Stanza Attuale</span>
-        <span style="color:#60a5fa;">📍 Villa Kri</span>
+        <span>📍 Stanza Attuale</span>
+        <span style="color:#38bdf8;">Villa Sinnoh</span>
       </div>
       <div class="room-badge" id="currentRoomText">Salone di Kri</div>
     </div>
 
-    <!-- Mari's Romance Meter -->
+    <!-- Mari's Love / Friendship Meter -->
     <div class="hud-card">
       <div class="hud-title">
-        <span>Fascino su Mari</span>
-        <span style="color:#f472b6;">💖 Obiettivo Conquista</span>
+        <span>💖 Affetto di Mari</span>
+        <span style="color:#f472b6;">Obiettivo Conquista</span>
       </div>
       <div class="meter-wrapper">
         <div class="progress-bar-bg">
@@ -48,14 +48,14 @@
       </div>
     </div>
 
-    <!-- Maya Radar Warning -->
+    <!-- Poketch Radar Maya -->
     <div class="hud-card">
       <div class="hud-title">
-        <span>Radar Ostacolo</span>
-        <span>👓 Maya</span>
+        <span>👓 Radar Maya</span>
+        <span>App Pokétch</span>
       </div>
       <div class="maya-status maya-safe" id="mayaStatusText">
-        🟢 Nessun pericolo immediato
+        🟢 Nessun pericolo
       </div>
     </div>
   </div>
@@ -64,28 +64,36 @@
   <div class="game-viewport">
     <canvas id="gameCanvas"></canvas>
 
+    <!-- Pokemon Encounter Flash Transition -->
+    <div id="pokemonFlash" class="pokemon-spot-flash"></div>
+
     <!-- Notification Toast -->
     <div id="toastNotification" class="toast-notification">
       Benvenuto alla festa di Kri a Monnaz!
     </div>
 
-    <!-- Dialogue Overlay Box -->
+    <!-- Dialogue Overlay & Pokemon Trainer Battle Cut-in -->
     <div id="dialogueOverlay" class="dialogue-overlay hidden">
-      <div class="dialogue-avatar-box">
-        <img id="dialogueAvatar" src="assets/sprites/mari.png" alt="Avatar">
+      <!-- High-Res Trainer Battle Portraits -->
+      <div class="trainer-cutin-layer" id="trainerCutinLayer">
+        <img id="trainerPortraitLeon" class="trainer-portrait-leon" src="assets/sprites/leon_portrait.png" alt="Leon Battle Sprite">
+        <img id="trainerPortraitMari" class="trainer-portrait-mari" src="assets/sprites/mari_portrait.png" alt="Mari Battle Sprite">
       </div>
-      <div class="dialogue-content">
-        <div class="dialogue-name" id="dialogueName">Mari</div>
+
+      <!-- Pokemon Pearl DS Style Text Box -->
+      <div class="pokemon-box">
+        <div class="dialogue-speaker-tag" id="dialogueName">Mari</div>
         <div class="dialogue-text" id="dialogueText">Ciao Leon! Che bella festa stasera a Monnaz...</div>
         <div class="dialogue-choices" id="dialogueChoices"></div>
+        <div class="dialogue-arrow">🔻</div>
       </div>
     </div>
   </div>
 
-  <!-- Inventory & Controls Tray -->
+  <!-- Leon's Bag / Inventory -->
   <div class="inventory-bar">
     <div class="inventory-items">
-      <span style="font-size: 11px; font-weight: bold; color: var(--text-muted); margin-right: 6px;">TASCA DI LEON:</span>
+      <span style="font-size: 11px; font-weight: bold; color: #94a3b8; margin-right: 6px;">BORSA DI LEON:</span>
       <div class="inventory-slot" id="slot1" title="Vuoto"></div>
       <div class="inventory-slot" id="slot2" title="Vuoto"></div>
       <div class="inventory-slot" id="slot3" title="Vuoto"></div>
@@ -120,20 +128,18 @@
     </div>
   </div>
 
-  <!-- Sprites & Help Modal -->
+  <!-- Sprites & Characters Modal -->
   <div id="spritesModal" class="modal-overlay hidden">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 id="modalTitle">👥 Membri MS & Sprite Personaggi</h3>
+        <h3 id="modalTitle">👥 Membri MS & Sprite Ufficiali Pokémon Perla</h3>
         <button id="closeModalBtn" class="btn">✖ Chiudi</button>
       </div>
-      <div class="modal-body" id="modalBody">
-        <!-- Injected dynamically by game.js -->
-      </div>
+      <div class="modal-body" id="modalBody"></div>
     </div>
   </div>
 
-  <!-- Game Scripts -->
+  <!-- Scripts -->
   <script src="js/audio.js"></script>
   <script src="js/house.js"></script>
   <script src="js/dialogues.js"></script>
