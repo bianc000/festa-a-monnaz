@@ -4,147 +4,119 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Leon & la bella Mari: Notte a Monnaz (Edizione Pokémon Perla)</title>
-  <link rel="stylesheet" href="css/style.css?v=20261105b">
+  <link rel="stylesheet" href="css/style.css?v=20261105c">
 </head>
 <body>
 
-  <!-- Pokemon Pearl Header -->
+  <!-- Header -->
   <header>
-    <div class="logo-area">
-      <div class="pokeball-icon">🔴</div>
+    <div class="logo-wrap">
+      <div class="logo-ball">🔴</div>
       <div>
         <h1>LEON & LA BELLA MARI</h1>
         <div class="subtitle">Festa a Monnaz a casa di Kri • Stile Pokémon Perla (Sinnoh)</div>
       </div>
     </div>
-    <div class="header-buttons">
-      <button id="cameraBtn" class="btn">🎥 Vista: Zoom Pokémon (DS)</button>
-      <button id="spritesBtn" class="btn">👥 Sprite Ufficiali</button>
-      <button id="audioBtn" class="btn btn-pink">🔊 BGM Pokémon: ON</button>
+    <div class="header-btns">
+      <button id="btnRestart" class="btn btn-restart">🔄 Ricomincia</button>
+      <button id="btnCamera" class="btn">🎥 Zoom DS</button>
+      <button id="btnChars" class="btn">👥 Personaggi</button>
+      <button id="btnAudio" class="btn btn-pink">🔊 BGM: ON</button>
     </div>
   </header>
 
-  <!-- Poketch HUD Status Bar -->
-  <div class="hud-container">
-    <!-- Current Room -->
-    <div class="hud-card">
-      <div class="hud-title">
-        <span>📍 Stanza Attuale</span>
-        <span style="color:#38bdf8;">Villa Sinnoh</span>
-      </div>
-      <div class="room-badge" id="currentRoomText">Salone di Kri</div>
+  <!-- Pokétch Top Status Bar -->
+  <div class="hud-bar">
+    <div class="hud-item">
+      <div class="hud-label"><span>📍 Stanza</span><span style="color:#38bdf8;">Villa Sinnoh</span></div>
+      <div class="room-tag" id="roomBadge">Salone delle Feste</div>
     </div>
 
-    <!-- Mari's Love / Friendship Meter -->
-    <div class="hud-card">
-      <div class="hud-title">
-        <span>💖 Affetto di Mari</span>
-        <span style="color:#f472b6;">Obiettivo Conquista</span>
-      </div>
-      <div class="meter-wrapper">
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill" id="meterFill" style="width: 20%;"></div>
-        </div>
-        <div class="meter-val" id="meterVal">20%</div>
+    <div class="hud-item">
+      <div class="hud-label"><span>💖 Affetto di Mari</span><span style="color:#f472b6;">Obiettivo Conquista</span></div>
+      <div class="love-meter">
+        <div class="love-bar-bg"><div class="love-bar-fill" id="loveFill" style="width:20%;"></div></div>
+        <div class="love-val" id="loveVal">20%</div>
       </div>
     </div>
 
-    <!-- Poketch Radar Maya -->
-    <div class="hud-card">
-      <div class="hud-title">
-        <span>👓 Radar Maya</span>
-        <span>App Pokétch</span>
-      </div>
-      <div class="maya-status maya-safe" id="mayaStatusText">
-        🟢 Nessun pericolo
-      </div>
+    <div class="hud-item">
+      <div class="hud-label"><span>👓 Radar Maya</span><span>App Pokétch</span></div>
+      <div class="maya-indicator maya-safe" id="mayaRadar">🟢 Nessun pericolo</div>
     </div>
   </div>
 
-  <!-- Game Viewport -->
-  <div class="game-viewport">
+  <!-- Game Screen -->
+  <div class="game-frame">
     <canvas id="gameCanvas"></canvas>
 
-    <!-- Pokemon Encounter Flash Transition -->
-    <div id="pokemonFlash" class="pokemon-spot-flash"></div>
+    <!-- Encounter Flash -->
+    <div id="screenFlash" class="screen-flash"></div>
 
     <!-- Notification Toast -->
-    <div id="toastNotification" class="toast-notification">
-      Benvenuto alla festa di Kri a Monnaz!
-    </div>
+    <div id="gameToast" class="game-toast">Festa a Monnaz avviata!</div>
 
-    <!-- Dialogue Overlay & Pokemon Trainer Battle Cut-in -->
-    <div id="dialogueOverlay" class="dialogue-overlay hidden">
-      <!-- High-Res Trainer Battle Portraits -->
-      <div class="trainer-cutin-layer" id="trainerCutinLayer">
-        <img id="trainerPortraitLeon" class="trainer-portrait-leon" src="assets/sprites/leon_portrait.png" alt="Leon Battle Sprite">
-        <img id="trainerPortraitMari" class="trainer-portrait-mari" src="assets/sprites/mari_portrait.png" alt="Mari Battle Sprite">
+    <!-- Dialogue Box & Trainer Portraits -->
+    <div id="dialogueWrap" class="dialogue-box-wrap hidden">
+      <!-- Trainer Battle Portraits -->
+      <div class="battle-cutin-row" id="cutinRow">
+        <img class="cutin-leon" src="assets/sprites/leon_portrait.png" alt="Leon">
+        <img class="cutin-mari" src="assets/sprites/mari_portrait.png" alt="Mari">
       </div>
 
-      <!-- Pokemon Pearl DS Style Text Box -->
-      <div class="pokemon-box">
-        <div class="dialogue-speaker-tag" id="dialogueName">Mari</div>
-        <div class="dialogue-text" id="dialogueText">Ciao Leon! Che bella festa stasera a Monnaz...</div>
-        <div class="dialogue-choices" id="dialogueChoices"></div>
-        <div class="dialogue-arrow">🔻</div>
+      <!-- Pokemon Perla DS Window -->
+      <div class="pkmn-dialogue-window">
+        <div class="pkmn-speaker" id="diagSpeaker">Mari</div>
+        <div class="pkmn-text" id="diagText">Ciao Leon!</div>
+        <div class="pkmn-choices" id="diagChoices"></div>
+        <div class="pkmn-arrow">🔻</div>
       </div>
     </div>
   </div>
 
-  <!-- Leon's Bag / Inventory -->
-  <div class="inventory-bar">
-    <div class="inventory-items">
-      <span style="font-size: 11px; font-weight: bold; color: #94a3b8; margin-right: 6px;">BORSA DI LEON:</span>
-      <div class="inventory-slot" id="slot1" title="Vuoto"></div>
-      <div class="inventory-slot" id="slot2" title="Vuoto"></div>
-      <div class="inventory-slot" id="slot3" title="Vuoto"></div>
+  <!-- Leon's Bag & Controls -->
+  <div class="bag-bar">
+    <div class="bag-slots">
+      <span style="font-size:10px;font-weight:bold;color:#94a3b8;margin-right:4px;">BORSA:</span>
+      <div class="bag-slot" id="slotDrink" title="Cocktail Fragola & Menta per Mari">🍸</div>
+      <div class="bag-slot" id="slotBeer" title="Birra Gelata per DJ Lollo">🍺</div>
+      <div class="bag-slot" id="slotChips" title="Patatine di Bubi (Clicca o premi Q per lanciare!)">🍟</div>
     </div>
 
-    <div class="controls-hint">
+    <div class="controls-guide">
       <span><kbd>WASD</kbd> / <kbd>Frecce</kbd> Muoviti</span>
       <span><kbd>SHIFT</kbd> Scatta</span>
-      <span><kbd>SPAZIO</kbd> / <kbd>E</kbd> Interagisci / Porte</span>
-      <span><kbd>Q</kbd> / <kbd>F</kbd> Lancia Patatine</span>
+      <span><kbd>SPAZIO</kbd> / <kbd>E</kbd> Azione / Porte</span>
+      <span><kbd>Q</kbd> Lancia Patatine</span>
       <span><kbd>1-3</kbd> Dialoghi</span>
     </div>
   </div>
 
-  <!-- Touch Controls for Mobile / Tablets -->
-  <div class="touch-controls">
-    <div class="dpad">
-      <div></div>
-      <button class="dpad-btn" id="btnUp">▲</button>
-      <div></div>
-      <button class="dpad-btn" id="btnLeft">◀</button>
-      <div style="display:flex;align-items:center;justify-content:center;font-size:10px;color:#94a3b8;">D-PAD</div>
-      <button class="dpad-btn" id="btnRight">▶</button>
-      <div></div>
-      <button class="dpad-btn" id="btnDown">▼</button>
-      <div></div>
+  <!-- Touch Controls -->
+  <div class="touch-bar">
+    <div class="touch-dpad">
+      <div></div><button class="t-btn" id="tUp">▲</button><div></div>
+      <button class="t-btn" id="tLeft">◀</button><div style="font-size:9px;display:flex;align-items:center;justify-content:center;color:#64748b;">PAD</div><button class="t-btn" id="tRight">▶</button>
+      <div></div><button class="t-btn" id="tDown">▼</button><div></div>
     </div>
-
-    <div class="action-btns">
-      <button class="action-btn" id="btnSprint">⚡ SPRINT</button>
-      <button class="action-btn pink" id="btnAction">PARLA / APRI</button>
+    <div class="touch-actions">
+      <button class="t-action" id="tSprint">⚡ SCATTO</button>
+      <button class="t-action pink" id="tAction">PARLA / APRI</button>
     </div>
   </div>
 
-  <!-- Sprites & Characters Modal -->
-  <div id="spritesModal" class="modal-overlay hidden">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 id="modalTitle">👥 Membri MS & Sprite Ufficiali Pokémon Perla</h3>
-        <button id="closeModalBtn" class="btn">✖ Chiudi</button>
+  <!-- Characters Modal -->
+  <div id="modalLayer" class="modal-layer hidden">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 style="font-size:14px;color:#38bdf8;">👥 I 14 Personaggi della Festa a Monnaz</h3>
+        <button id="btnCloseModal" class="btn">✖ Chiudi</button>
       </div>
-      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-content" id="modalContent"></div>
     </div>
   </div>
 
-  <!-- Scripts with cache busters -->
-  <script src="js/audio.js?v=20261105b"></script>
-  <script src="js/house.js?v=20261105b"></script>
-  <script src="js/dialogues.js?v=20261105b"></script>
-  <script src="js/characters.js?v=20261105b"></script>
-  <script src="js/game.js?v=20261105b"></script>
+  <!-- Unified Engine Script (Cache-busted) -->
+  <script src="js/game.js?v=fresh20261105c"></script>
 </body>
 </html>
