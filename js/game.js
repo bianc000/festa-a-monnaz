@@ -727,7 +727,10 @@ class GameEngine {
 
     overlay.classList.remove('hidden');
 
-    if (speakerId === 'mari' || this.state.mariAlone) {
+    const cutinSpeaker = document.getElementById('cutinSpeaker');
+    const portraitIds = ['mari', 'kri', 'roby', 'matti', 'jelmo', 'pibe', 'bubi', 'ento', 'jona', 'lindi'];
+    if (portraitIds.includes(speakerId) && cutinSpeaker) {
+      cutinSpeaker.src = `assets/sprites/${speakerId}_portrait.png?v=${Date.now()}`;
       cutinRow.style.display = 'flex';
     } else {
       cutinRow.style.display = 'none';
@@ -1079,6 +1082,14 @@ class GameEngine {
     layer.classList.remove('hidden');
 
     let html = '<div class="chars-grid">';
+    html += `
+      <div class="char-card">
+        <div class="char-img-wrap">
+          <img src="assets/sprites/leon.png?v=${Date.now()}" alt="Leon">
+        </div>
+        <div style="font-size:12px;font-weight:bold;color:#38bdf8;">Leon (Tu)</div>
+      </div>
+    `;
     this.npcs.forEach(n => {
       html += `
         <div class="char-card">
@@ -1329,7 +1340,11 @@ class GameEngine {
 
   drawCharacter(c, isPlayer = false) {
     const img = isPlayer ? this.sprites['leon'] : this.sprites[c.id];
-    const w = 32, h = 40;
+    let w = 32, h = 40;
+    if (img && img.complete && img.naturalWidth > 0) {
+      w = img.naturalWidth;
+      h = img.naturalHeight;
+    }
     const drawX = Math.round(c.x - w / 2);
     const drawY = Math.round(c.y - h / 2);
 
