@@ -201,18 +201,19 @@ class CharacterManager {
   }
 
   loadAllSprites() {
+    const v = Date.now(); // Cache-buster so browser NEVER reuses old cached sprites
     const ids = ['leon', 'mari', 'kri', 'maya', 'ento', 'matti', 'jona', 'pibe', 'lollo', 'roby', 'lindi', 'bubi', 'jelmo', 'ara'];
     for (const id of ids) {
       const img = new Image();
-      img.src = `assets/sprites/${id}.png`;
+      img.src = `assets/sprites/${id}.png?v=${v}`;
       this.spriteImages[id] = img;
     }
 
-    // High-Res Trainer Battle Portraits
+    // High-Res Trainer Battle Portraits (Extracted from user's artwork)
     const portraits = ['mari_portrait', 'leon_portrait'];
     for (const pid of portraits) {
       const pimg = new Image();
-      pimg.src = `assets/sprites/${pid}.png`;
+      pimg.src = `assets/sprites/${pid}.png?v=${v}`;
       this.portraits[pid] = pimg;
     }
   }

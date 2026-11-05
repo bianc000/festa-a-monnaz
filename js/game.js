@@ -5,8 +5,9 @@ class Game {
     this.canvas = document.getElementById('gameCanvas');
     this.ctx = this.canvas.getContext('2d');
     
-    this.canvas.width = 1200;
-    this.canvas.height = 900;
+    // Set 960x640 resolution for crisp DS pixel aspect
+    this.canvas.width = 960;
+    this.canvas.height = 640;
 
     this.house = new House();
     this.characters = new CharacterManager(this.house);
@@ -28,6 +29,10 @@ class Game {
       mayaDodges: 0,
       aloneSeconds: 0
     };
+
+    // Camera Mode: 'pokemon' (zoomed following Leon) or 'overview' (whole house)
+    this.zoomMode = 'pokemon';
+    this.camera = { x: 120, y: 450 };
 
     this.aloneTimer = 0;
     this.confessionTriggered = false;
@@ -89,6 +94,19 @@ class Game {
   }
 
   setupUI() {
+    // Camera toggle button
+    const cameraBtn = document.getElementById('cameraBtn');
+    if (cameraBtn) {
+      cameraBtn.addEventListener('click', () => {
+        this.zoomMode = (this.zoomMode === 'pokemon') ? 'overview' : 'pokemon';
+        cameraBtn.textContent = (this.zoomMode === 'pokemon') 
+          ? '🎥 Vista: Zoom Pokémon (DS)' 
+          : '🗺️ Vista: Villa Intera';
+        cameraBtn.classList.toggle('btn-pink', this.zoomMode === 'pokemon');
+      });
+    }
+
+    // Audio button
     const audioBtn = document.getElementById('audioBtn');
     if (audioBtn) {
       audioBtn.addEventListener('click', () => {
@@ -98,6 +116,7 @@ class Game {
       });
     }
 
+    // Sprites Modal
     const spritesBtn = document.getElementById('spritesBtn');
     const spritesModal = document.getElementById('spritesModal');
     const closeModalBtn = document.getElementById('closeModalBtn');
@@ -111,6 +130,7 @@ class Game {
       });
     }
 
+    // Quick chip click
     const slot3 = document.getElementById('slot3');
     if (slot3) {
       slot3.style.cursor = 'pointer';
@@ -175,13 +195,13 @@ class Game {
         this.updateInventoryUI();
         this.showNotification("Hai preso dal frigo: 'Birra Gelata' per Lollo! 🍺");
       } else {
-        this.showNotification("Il frigo di Kri è pieno di bibite e Poffin artigianali.");
+        this.showNotification("Il frigo di Kri è pieno di bibite e Poffin di Sinnoh.");
       }
     } else if (f.action === 'dj_booth') {
       this.openDialogue('lollo');
     } else if (f.action === 'beer_pong') {
       window.soundSystem.playBlip();
-      this.showNotification("Matti e Jelmo stanno disputando una finale agguerrita di Beer Pong Pokéball!");
+      this.showNotification("Matti e Jelmo stanno disputando la finale di Beer Pong Pokéball!");
     } else if (f.action === 'guitar') {
       window.soundSystem.playHeart();
       this.showNotification("Una chitarra classica di Cuoripoli. Atmosfera romantica e intima.");
@@ -232,11 +252,14 @@ class Game {
 
     overlay.classList.remove('hidden');
 
-    // Show Trainer Battle Portraits if talking with Mari or in romantic mode
+    // Show Battle Cut-in Sprites when talking to Mari!
     if (speakerId === 'mari' || this.state.mariAloneWithLeon) {
       cutinLayer.style.display = 'flex';
       leonImg.style.display = 'block';
       mariImg.style.display = 'block';
+      // Force reload images with timestamp
+      mariImg.src = `assets/sprites/mari_portrait.png?v=${Date.now()}`;
+      leonImg.src = `assets/sprites/leon_portrait.png?v=${Date.now()}`;
     } else {
       cutinLayer.style.display = 'none';
     }
@@ -303,7 +326,7 @@ class Game {
     } else if (choice.action === 'set_dj_romance') {
       this.state.djRomance = true;
       window.soundSystem.playHeart();
-      this.showNotification("🎶 Lollo ha lanciato il disco romantico a Monnaz! Mari ne sarà entusiasta!");
+      this.showNotification("🎶 Lollo ha lanciato il pezzo lento romantico a Monnaz! Mari ne sarà entusiasta!");
     } else if (choice.action === 'distract_maya') {
       const maya = this.characters.getNpc('maya');
       if (maya) {
@@ -372,7 +395,7 @@ class Game {
         mayaStatusEl.textContent = '⚠️ MAYA TI INSEGUE!';
       } else if (maya.state === 'distracted') {
         mayaStatusEl.className = 'maya-status maya-safe';
-        mayaStatusEl.textContent = '🍟 Maya distratta da patatine';
+        mayaStatusEl.textContent = '🍟 Maya mangia patatine';
       } else {
         mayaStatusEl.className = 'maya-status maya-safe';
         mayaStatusEl.textContent = '🟢 Nessun pericolo';
@@ -494,9 +517,9 @@ class Game {
     body.innerHTML = `
       <div style="text-align: center; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
         <div style="display: flex; gap: 20px; justify-content: center; align-items: flex-end;">
-          <img src="assets/sprites/leon_portrait.png" style="height: 160px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
+          <img src="assets/sprites/leon_portrait.png" style="height: 180px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
           <div style="font-size: 48px; animation: pulse 1s infinite;">💖</div>
-          <img src="assets/sprites/mari_portrait.png" style="height: 160px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
+          <img src="assets/sprites/mari_portrait.png" style="height: 180px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
         </div>
         <h2 style="color: #f472b6; font-size: 22px;">Missione Compiuta alla Festa di Monnaz!</h2>
         <p style="font-size: 14px; line-height: 1.6; max-width: 600px; color: #e2e8f0;">
@@ -549,7 +572,7 @@ class Game {
       gridHtml += `
         <div class="sprite-card">
           <div class="sprite-preview-wrap">
-            <img src="assets/sprites/${c.id}.png" alt="${c.name}">
+            <img src="assets/sprites/${c.id}.png?v=${Date.now()}" alt="${c.name}">
           </div>
           <div class="sprite-card-name">${c.name}</div>
           <div class="sprite-card-role">${c.role}</div>
@@ -569,13 +592,30 @@ class Game {
     this.checkWinCondition();
     this.updateHud();
 
+    // Smooth Camera Follow
+    const p = this.characters.player;
+    this.camera.x += (p.x - this.camera.x) * 0.1;
+    this.camera.y += (p.y - this.camera.y) * 0.1;
+
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.ctx.save();
+    if (this.zoomMode === 'pokemon') {
+      const zoom = 1.7; // Pokemon DS close-up scale!
+      this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
+      this.ctx.scale(zoom, zoom);
+      this.ctx.translate(-this.camera.x, -this.camera.y);
+    } else {
+      // Overview fit scale
+      const overviewScale = Math.min(this.canvas.width / 1200, this.canvas.height / 900);
+      this.ctx.scale(overviewScale, overviewScale);
+    }
+
     this.house.render(this.ctx);
     this.characters.render(this.ctx);
 
     // Interaction prompt tooltip
     if (!this.state.dialogueActive && !this.state.gameWon) {
-      const p = this.characters.player;
       let promptText = null;
 
       const doorNear = this.house.getInteractiveNear(p.x, p.y, 45);
@@ -608,12 +648,14 @@ class Game {
     if (this.aloneTimer > 0) {
       const alpha = Math.min(0.4, this.aloneTimer / 240);
       this.ctx.fillStyle = `rgba(236, 72, 153, ${alpha})`;
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.fillRect(0, 0, this.house.width, this.house.height);
 
       this.ctx.fillStyle = '#ffffff';
       this.ctx.font = 'bold 20px monospace';
-      this.ctx.fillText(`✨ MOMENTO ROMANTICO: DA SOLI CON MARI! (${Math.ceil((180 - this.aloneTimer) / 60)}s) ✨`, 260, 40);
+      this.ctx.fillText(`✨ MOMENTO ROMANTICO: DA SOLI CON MARI! (${Math.ceil((180 - this.aloneTimer) / 60)}s) ✨`, p.x - 240, p.y - 80);
     }
+
+    this.ctx.restore();
 
     requestAnimationFrame((t) => this.loop(t));
   }
