@@ -1,6 +1,9 @@
 // ============================================================
 // LEON & LA BELLA MARI - FESTA A MONNAZ (POKÉMON PERLA EDITION)
 // Accurate Sinnoh Tile Engine, Wide Accessible Doorways, Anti-Freeze AI
+// Special MS roles: Beer Pong (Ara+Kri vs Matti+Jona), Bagno occupato da Bubi,
+// Matti dà la birra, Jona dà le patatine, Ento dice "eh okay ma la Michi...",
+// Jelmo, Pibe, Lindi e Roby danno consigli strategici!
 // ============================================================
 
 // 1. SOUND SYSTEM
@@ -222,48 +225,33 @@ const VILLA_MAP = {
     { id: 'kitchen', name: 'Cucina & Beer Pong', x: 40, y: 50, w: 460, h: 260, type: 'checkers' },
     { id: 'hallway', name: 'Corridoio', x: 540, y: 50, w: 160, h: 660, type: 'wood' },
     { id: 'bedroom', name: 'Camera Relax (Stile Perla)', x: 740, y: 50, w: 260, h: 270, type: 'perla_room' },
-    { id: 'bathroom', name: 'Bagno della Villa', x: 740, y: 360, w: 180, h: 150, type: 'tiles' },
+    { id: 'bathroom', name: 'Bagno (Occupato da Bubi)', x: 740, y: 360, w: 180, h: 150, type: 'tiles' },
     { id: 'balcony', name: 'Terrazza Panoramica', x: 740, y: 550, w: 260, h: 160, type: 'stone' }
   ],
-  // Solid wall bounds with GENEROUS 80px OPENINGS for seamless access!
   walls: [
-    // Outer boundaries
     { x: 30, y: 30, w: 980, h: 20 },
     { x: 30, y: 720, w: 980, h: 20 },
     { x: 20, y: 30, w: 20, h: 710 },
     { x: 1010, y: 30, w: 20, h: 710 },
-
-    // Left side horizontal divider (between Cucina and Salone)
     { x: 40, y: 310, w: 460, h: 24 },
-
-    // Wall between Kitchen and Hallway (with 80px opening from y=140 to 220)
     { x: 500, y: 40, w: 24, h: 100 },
     { x: 500, y: 220, w: 24, h: 100 },
-
-    // Wall between Living Room and Hallway (with 80px opening from y=450 to 530)
     { x: 500, y: 320, w: 24, h: 130 },
     { x: 500, y: 530, w: 24, h: 190 },
-
-    // Wall between Hallway and Bedroom (with 80px opening from y=140 to 220)
     { x: 700, y: 40, w: 24, h: 100 },
     { x: 700, y: 220, w: 24, h: 110 },
     { x: 720, y: 320, w: 290, h: 24 },
-
-    // Wall between Hallway and Bathroom (with 70px opening from y=390 to 460)
     { x: 700, y: 330, w: 24, h: 60 },
     { x: 700, y: 460, w: 24, h: 70 },
     { x: 720, y: 520, w: 290, h: 24 },
-
-    // Wall between Hallway and Balcony (with 80px opening from y=580 to 660)
     { x: 700, y: 530, w: 24, h: 50 },
     { x: 700, y: 660, w: 24, h: 60 }
   ],
-  // Wide Doorways / Thresholds with Mats
   doorways: [
     { id: 'door_kitchen', name: 'Arco Cucina', x: 500, y: 140, w: 24, h: 80, matColor: '#cbd5e1' },
     { id: 'door_living', name: 'Arco Salone', x: 500, y: 450, w: 24, h: 80, matColor: '#f43f5e' },
     { id: 'door_bedroom', name: 'Porta Camera Relax', x: 700, y: 140, w: 24, h: 80, matColor: '#38bdf8', isBarriered: false },
-    { id: 'door_bathroom', name: 'Porta Bagno', x: 700, y: 390, w: 24, h: 70, matColor: '#0284c7' },
+    { id: 'door_bathroom', name: 'Porta Bagno (Bubi dentro)', x: 700, y: 390, w: 24, h: 70, matColor: '#0284c7' },
     { id: 'door_balcony', name: 'Uscita Terrazza', x: 700, y: 580, w: 24, h: 80, matColor: '#94a3b8', isBarriered: false }
   ]
 };
@@ -276,7 +264,7 @@ const DIALOGUES = {
       if (s.mariAlone) return "Leon... finalmente soli. La vista è da togliere il fiato, ma tu sei stato un vero eroe stasera.";
       if (s.mariFollowing) return "Ti sto seguendo, Leon! Portami in terrazza o in camera... spero che Maya non ci veda!";
       if (s.mariLove >= 100) return "Leon, sei stato dolcissimo stasera... c'è troppo chiasso qui nel salone. Mi porti in un posto appartato solo noi due?";
-      return "Ciao Leon! Che bella festa stasera a casa di Kri... sei elegantissimo!";
+      return "Ciao Leon! Che bella festa stasera a casa di Kri... sei elegantissimo con quella maglia Vitality!";
     },
     choices: (s) => {
       if (s.mariLove >= 100 && !s.mariFollowing) {
@@ -284,8 +272,8 @@ const DIALOGUES = {
       }
       if (s.mariFollowing) return [{ text: "Seguimi, quasi arrivati...", reply: "Ti seguo a ruota!" }];
       const opts = [
-        { text: "Mari, sei incantevole stasera. Questo vestito viola e magenta ti sta d'incanto.", bonus: 35, reply: "Grazie Leon! Sei sempre un vero gentiluomo, e quella maglietta Vitality ti dona tantissimo." },
-        { text: "Leon & Mari: la coppia più forte di Sinnoh e di MS!", bonus: 20, reply: "Ahaha che sfacciato! Però ammetto che mi fai battere il cuore." }
+        { text: "Mari, sei incantevole stasera. Questo vestito viola e magenta ti sta d'incanto.", bonus: 35, reply: "Grazie Leon! Sei sempre un vero gentiluomo, e i tuoi riccioli castani sono stupendi." },
+        { text: "Leon & Mari: la coppia più bella che MS abbia mai visto!", bonus: 20, reply: "Ahaha che sfacciato! Però ammetto che mi fai battere forte il cuore." }
       ];
       if (s.inventory.includes('drink')) {
         opts.unshift({ text: "Ti ho portato il Cocktail Fragola & Menta fresco dal frigo!", bonus: 50, consume: 'drink', reply: "Mio dio, il mio cocktail preferito! Ma come facevi a saperlo? Sei magico!" });
@@ -296,76 +284,125 @@ const DIALOGUES = {
       return opts;
     }
   },
+
   maya: {
     speaker: 'Maya', title: 'L\'incubo di Monnaz 👓',
     intro: () => "LEOOON! Ti ho preso! Il nostro legame astrale è al 100%! Guarda il mio maglione a pois!",
     choices: (s) => {
-      const opts = [{ text: "Guarda Maya, un Bidoof dorato fuori dalla finestra!", action: 'escape_maya', reply: "DOVE?! Un Bidoof dorato?! *Maya si gira confusa*" }];
+      const opts = [{ text: "Guarda Maya, un Bidoof dorato fuori dalla finestra!", action: 'escape_maya', reply: "DOVE?! Un Bidoof dorato?! *Maya si gira confusa cercandolo invano*" }];
       if (s.inventory.includes('chips')) {
-        opts.unshift({ text: "(Lancia il pacchetto di patatine al tartufo di Bubi)", action: 'feed_maya', consume: 'chips', reply: "PATATINE AL TARTUFO! Slurp! *Maya si fionda a mangiare*" });
+        opts.unshift({ text: "(Lancia il pacchetto di patatine che ti ha dato Jona)", action: 'feed_maya', consume: 'chips', reply: "PATATINE AL TARTUFO! Slurp! *Maya si fionda a mangiare*" });
       }
       return opts;
     }
   },
-  kri: {
-    speaker: 'Kri', title: 'Padrone di Casa & Barman',
-    intro: () => "Leon, fratellone! Benvenuto a Monnaz a casa mia! Prendi pure da bere in frigo!",
-    choices: () => [{ text: "Kri, hai visto la bella Mari?", reply: "È vicino alla pista da ballo! Splende stasera. Occhio a Maya però!" }]
+
+  // BEER PONG MATCH: ARA & KRI VS MATTI & JONA!
+  ara: {
+    speaker: 'Ara', title: 'Campionessa Beer Pong (con Kri) 🌸',
+    intro: () => "Ara: 'Vai Kri, mira dritto al bicchiere rosso! Dobbiamo assolutamente battere Matti e Jona!' Leon, non distrarci che siamo sul 4 pari in rimonta!",
+    choices: () => [
+      { text: "Forza Ara & Kri! Tifo per voi!", reply: "Ara: 'Grazie Leon! Se ti serve da bere chiedi a Matti che ha le birre, e Jona ha le patatine!'" }
+    ]
   },
-  lollo: {
-    speaker: 'Lollo', title: 'DJ Resident Cuoripoli 🎧',
-    intro: (s) => s.djRomance ? "Il pezzo lento sta suonando a palla per te e Mari, Leon!" : "Yo Leon! Portami una birra dal frigo e metto la slow dance!",
+
+  kri: {
+    speaker: 'Kri', title: 'Padrone di Casa (in coppia con Ara) 🔴',
+    intro: () => "Kri: 'Leon, fratello! Io e Ara stiamo disputando la partita di Beer Pong del secolo contro Matti e Jona! Tutta Monnaz è con noi!'",
+    choices: () => [
+      { text: "Kri, che sfida accesa! Chi vince?", reply: "Kri: 'Siamo punto a punto! Se cerchi una birra per DJ Lollo chiedila a Matti, e nel frigo c'è il drink per Mari!'" }
+    ]
+  },
+
+  matti: {
+    speaker: 'Matti', title: 'Campione Beer Pong (con Jona) 🕶️',
+    intro: (s) => s.inventory.includes('beer')
+      ? "Matti: 'Leon, sono concentratissimo! Sto per fare il tiro decisivo contro Ara e Kri!'"
+      : "Matti: 'LEOON! Sfida epica a Beer Pong con Jona contro Ara e Kri! Ho qui una cassa di birre gelate, te ne serve una per DJ Lollo?'",
     choices: (s) => {
-      if (s.inventory.includes('beer')) {
-        return [{ text: "Ecco la birra ghiacciata, Lollo! Metti il pezzo romantico!", consume: 'beer', action: 'set_romance', reply: "Grande bro! Traccia romantica on fire!" }];
+      if (!s.inventory.includes('beer')) {
+        return [{ text: "Matti, me ne daresti una per Lollo in consolle?", action: 'get_beer', reply: "Matti: 'Tieni questa birra ghiacciata, Leon! Ora lasciami tirare che devo battere Kri ed Ara!'" }];
       }
-      return [{ text: "Che musica c'è in consolle?", reply: "Hit da ballare! Portami una birra dal frigo per la slow dance!" }];
+      return [{ text: "Forza Matti, fai centro!", reply: "Matti: 'Ci puoi scommettere, centro perfetto!'" }];
     }
   },
-  bubi: {
-    speaker: 'Bubi', title: 'Maestro Snack 🍟',
-    intro: () => "Crunch crunch! Queste patatine al tartufo sono magiche. Ne vuoi un pacchetto?",
-    choices: () => [{ text: "Grazie Bubi, dammene uno per distrarre Maya!", action: 'give_chips', reply: "Tieni! Se Maya ti punta, premendo Q le butterai a terra e si fermerà!" }]
-  },
-  ento: {
-    speaker: 'Ento', title: 'Asso Allenatore MS 🧢',
-    intro: () => "Bella Leon! Tutte le porte sono aperte. Porta Mari sul balcone o in camera relax!",
-    choices: () => [{ text: "Grazie Ento!", reply: "Forza Leon, tutta MS è con te!" }]
-  },
-  matti: {
-    speaker: 'Matti', title: 'Campione Beer Pong 🕶️',
-    intro: () => "Stasera si sboccia a Monnaz! Ho appena fatto centro nel bicchiere di Jelmo!",
-    choices: () => [{ text: "Daje Matti!", reply: "Conquista Mari!" }]
-  },
+
   jona: {
-    speaker: 'Jona', title: 'Allenatore MS 👕',
-    intro: () => "Leon, se tieni premuto SHIFT scatti veloce e semini Maya!",
-    choices: () => [{ text: "Ottimo!", reply: "Vai convinto!" }]
+    speaker: 'Jona', title: 'Tattico Beer Pong (con Matti) 👕',
+    intro: (s) => s.inventory.includes('chips')
+      ? "Jona: 'Leon, usa quelle patatine se Maya ti punta! Io e Matti dobbiamo rimontare contro Ara e Kri!'"
+      : "Jona: 'Leon! Gara tiratissima a Beer Pong con Matti contro Ara e Kri! Ho un pacchetto di patatine avanzato, prendilo tu per distrarre Maya!'",
+    choices: (s) => {
+      if (!s.inventory.includes('chips')) {
+        return [{ text: "Jona, mi daresti quel pacchetto di patatine?", action: 'get_chips', reply: "Jona: 'Prendi pure, Leon! Se premi Q mentre Maya ti insegue, le butterai a terra e si bloccherà a mangiare!'" }];
+      }
+      return [{ text: "Forza Jona, batti Ara e Kri!", reply: "Jona: 'Stiamo studiando la traiettoria della pallina, siamo pronti!'" }];
+    }
   },
+
+  // BAGNO OCCUPATO DA BUBI
+  bubi: {
+    speaker: 'Bubi', title: 'Chiuso in Bagno 🚽',
+    intro: () => "Bubi: 'OCCUPATOOO! Raga, sono Bubi, sto occupando il bagno per un po'! Bussate più tardi che ci vorrà del tempo!'",
+    choices: () => [
+      { text: "Bubi, fai presto!", reply: "Bubi: 'Ci provo, ma non garantisco nulla! Andate da Matti per la birra e da Jona per le patatine!'" }
+    ]
+  },
+
+  // ENTO: ICONIC ONE-LINER
+  ento: {
+    speaker: 'Ento', title: 'Membro MS 🧢',
+    intro: () => "eh okay ma la Michi...",
+    choices: () => [
+      { text: "...Cosa c'entra la Michi adesso, Ento?", reply: "eh okay ma la Michi..." }
+    ]
+  },
+
+  // JELMO (LO SCIENZIATO MS) DA' CONSIGLI
+  jelmo: {
+    speaker: 'Jelmo', title: 'Scienziato di MS 📊',
+    intro: () => "Jelmo (Scienziato MS): 'Leon. Secondo i miei calcoli algoritmici, hai il 96.4% di probabilità di successo con Mari se segui questo schema: 1) Offrile il cocktail dal frigo, 2) Prendi la birra da Matti e portala a Lollo, 3) Prendi le patatine da Jona per neutralizzare Maya, 4) Portala da sola sul balcone o in camera!'",
+    choices: () => [
+      { text: "Qual è il raggio visivo di Maya, Jelmo?", reply: "Jelmo: '180 pixel esatti. Se ti intercetta, stordiscila premendo [1] per guadagnare 10 secondi di campo libero.'" }
+    ]
+  },
+
+  // PIBE DA' CONSIGLI
   pibe: {
     speaker: 'Pibe', title: 'Bomber di Sinnoh ⚽',
-    intro: () => "Dribbla Maya come sul campo! Gli accessi alle stanze sono tutti aperti!",
-    choices: () => [{ text: "Chiaro!", reply: "Punta dritto al gol con Mari!" }]
+    intro: () => "Pibe: 'Leon! Ascolta il bomber: stasera devi fare come me in campo: finta di corpo su Maya e assist dritto per il cuore di Mari! Chiedi la birra a Matti e le patatine a Jona al Beer Pong!'",
+    choices: () => [
+      { text: "Pibe, dammi uno schema per isolare Mari!", reply: "Pibe: 'Una volta convinta Mari a seguirti, corri dritto verso la terrazza panoramica o la camera e attiva la barriera privacy! Maya resta in fuorigioco!'" }
+    ]
   },
-  roby: {
-    speaker: 'Roby', title: 'Amico di Sinnoh 💚',
-    intro: () => "Mari stasera ti guardava appena sei entrato! È il tuo momento!",
-    choices: () => [{ text: "Grazie Roby!", reply: "Forza!" }]
-  },
+
+  // LINDI DA' CONSIGLI
   lindi: {
     speaker: 'Lindi', title: 'Amica di Mari ✨',
-    intro: () => "Mari adora le persone gentili. Fai il galante e andrà alla grande!",
-    choices: () => [{ text: "Grazie Lindi!", reply: "Buona fortuna!" }]
+    intro: () => "Lindi: 'Leon! Ti do un consiglio prezioso da migliore amica di Mari: a lei piacciono i ragazzi gentili e attenti. Falle un complimento sul suo splendido vestito viola, portale il suo cocktail preferito dal frigo e poi invitala sul balcone a guardare le stelle!'",
+    choices: () => [
+      { text: "Grazie mille Lindi, seguirò il tuo consiglio!", reply: "Lindi: 'Fai il galante! Mari aspetta solo che tu faccia la prima mossa romantica!'" }
+    ]
   },
-  jelmo: {
-    speaker: 'Jelmo', title: 'Scienziato MS 📊',
-    intro: () => "Tutte le stanze hanno corridoi larghi 80 pixel. Nessun rischio di rimanere incastrati.",
-    choices: () => [{ text: "Tatticamente perfetto!", reply: "Buona missione." }]
+
+  // ROBY DA' CONSIGLI
+  roby: {
+    speaker: 'Roby', title: 'Amico di Sinnoh 💚',
+    intro: () => "Roby: 'Leon, consiglio d'oro: la camera relax e la terrazza panoramica sono i due posti migliori della villa per restare da soli con Mari! Ricordati che tutti gli accessi sono aperti e larghi, non rimarrai mai bloccato!'",
+    choices: () => [
+      { text: "Grazie Roby, dritta fondamentale!", reply: "Roby: 'Daje Leon, tutta la crew di MS tifa per te!'" }
+    ]
   },
-  ara: {
-    speaker: 'Ara', title: 'Fanciulla delle Feste 🌸',
-    intro: () => "La notte a Monnaz è stupenda! Se resti solo con Mari in terrazza hai vinto!",
-    choices: () => [{ text: "Vado subito!", reply: "Divertitevi!" }]
+
+  lollo: {
+    speaker: 'Lollo', title: 'DJ Resident Cuoripoli 🎧',
+    intro: (s) => s.djRomance ? "Il pezzo lento sta suonando a palla per te e Mari, Leon!" : "Yo Leon! Chiedi una birra gelata a Matti al Beer Pong e portamela, così metto la slow dance!",
+    choices: (s) => {
+      if (s.inventory.includes('beer')) {
+        return [{ text: "Ecco la birra fresca di Matti, Lollo! Metti il pezzo lento!", consume: 'beer', action: 'set_romance', reply: "Grande bro! Traccia romantica on fire per te e Mari!" }];
+      }
+      return [{ text: "Che musica c'è in consolle?", reply: "Hit da ballare! Vai da Matti a prendere una birra per far partire la slow dance!" }];
+    }
   }
 };
 
@@ -380,10 +417,7 @@ class GameEngine {
     this.keys = {};
     this.setupInput();
 
-    // Load authentic assets with cache buster
     this.loadAssets();
-
-    // Init state
     this.initGame();
 
     this.camera = { x: 120, y: 450 };
@@ -394,7 +428,7 @@ class GameEngine {
     this.lastTime = performance.now();
     requestAnimationFrame((t) => this.loop(t));
 
-    this.showToast("🎮 Benvenuto a Monnaz! Tutte le stanze sono aperte: trova la bella Mari!");
+    this.showToast("🎮 Benvenuto a Monnaz! Ara & Kri sfidano Matti & Jona a Beer Pong! Bagno occupato da Bubi!");
   }
 
   loadAssets() {
@@ -407,7 +441,6 @@ class GameEngine {
       this.sprites[id] = img;
     });
 
-    // Battle Portraits
     this.portraits = {
       leon: new Image(),
       mari: new Image()
@@ -415,7 +448,6 @@ class GameEngine {
     this.portraits.leon.src = `assets/sprites/leon_portrait.png?v=${v}`;
     this.portraits.mari.src = `assets/sprites/mari_portrait.png?v=${v}`;
 
-    // Pokemon Perla Room Sprites extracted from user reference image!
     this.pkmn = {
       floor: new Image(),
       wall: new Image(),
@@ -466,24 +498,35 @@ class GameEngine {
       shieldTimer: 0
     };
 
-    // NPCs
+    // EXACT ROLES & POSITIONS:
+    // Kitchen Beer Pong: Ara & Kri (left side) VS Matti & Jona (right side)
+    // Bagno: Bubi occupato dentro!
+    // Salone: Mari, Lollo (DJ), Ento, Roby, Lindi
+    // Hallway: Jelmo (Scienziato), Pibe, Maya (Obstacle)
     this.npcs = [
-      { id: 'mari', name: 'Mari', x: 320, y: 420, dir: 'down', room: 'living', isFollowing: false },
-      { id: 'kri', name: 'Kri', x: 100, y: 160, dir: 'right', room: 'kitchen' },
-      { id: 'maya', name: 'Maya', x: 620, y: 220, dir: 'down', room: 'hallway', state: 'patrol', timer: 120, confusedTimer: 0 },
+      { id: 'mari', name: 'Mari', x: 300, y: 420, dir: 'down', room: 'living', isFollowing: false },
+      
+      // Beer Pong Match in Kitchen
+      { id: 'ara', name: 'Ara', x: 135, y: 160, dir: 'right', room: 'kitchen' },
+      { id: 'kri', name: 'Kri', x: 135, y: 220, dir: 'right', room: 'kitchen' },
+      { id: 'matti', name: 'Matti', x: 375, y: 160, dir: 'left', room: 'kitchen' }, // Gives Beer!
+      { id: 'jona', name: 'Jona', x: 375, y: 220, dir: 'left', room: 'kitchen' },   // Gives Chips!
+
+      // Bagno occupato da Bubi!
+      { id: 'bubi', name: 'Bubi', x: 810, y: 420, dir: 'down', room: 'bathroom' },
+
+      // Living room
       { id: 'lollo', name: 'Lollo', x: 120, y: 345, dir: 'down', room: 'living' },
-      { id: 'bubi', name: 'Bubi', x: 320, y: 90, dir: 'left', room: 'kitchen' },
-      { id: 'matti', name: 'Matti', x: 390, y: 180, dir: 'left', room: 'kitchen' },
-      { id: 'jelmo', name: 'Jelmo', x: 390, y: 230, dir: 'left', room: 'kitchen' },
-      { id: 'ento', name: 'Ento', x: 80, y: 640, dir: 'right', room: 'living' },
-      { id: 'roby', name: 'Roby', x: 230, y: 640, dir: 'left', room: 'living' },
-      { id: 'jona', name: 'Jona', x: 620, y: 530, dir: 'down', room: 'hallway' },
-      { id: 'pibe', name: 'Pibe', x: 620, y: 410, dir: 'up', room: 'hallway' },
-      { id: 'lindi', name: 'Lindi', x: 420, y: 450, dir: 'left', room: 'living' },
-      { id: 'ara', name: 'Ara', x: 230, y: 800, dir: 'right', room: 'garden' }
+      { id: 'ento', name: 'Ento', x: 90, y: 640, dir: 'right', room: 'living' }, // "eh okay ma la Michi..."
+      { id: 'roby', name: 'Roby', x: 230, y: 640, dir: 'left', room: 'living' },  // Gives advice
+      { id: 'lindi', name: 'Lindi', x: 420, y: 450, dir: 'left', room: 'living' }, // Gives advice
+
+      // Hallway
+      { id: 'jelmo', name: 'Jelmo', x: 620, y: 430, dir: 'left', room: 'hallway' }, // Scienziato MS gives advice!
+      { id: 'pibe', name: 'Pibe', x: 620, y: 550, dir: 'up', room: 'hallway' },     // Bomber gives advice!
+      { id: 'maya', name: 'Maya', x: 620, y: 200, dir: 'down', room: 'hallway', state: 'patrol', timer: 120, confusedTimer: 0 }
     ];
 
-    // Reset barriers
     VILLA_MAP.doorways.forEach(d => d.isBarriered = false);
 
     this.chipsFloor = null;
@@ -564,13 +607,11 @@ class GameEngine {
   }
 
   isSolid(x, y, rad = 12) {
-    // Solid walls
     for (const w of VILLA_MAP.walls) {
       if (x + rad > w.x && x - rad < w.x + w.w && y + rad > w.y && y - rad < w.y + w.h) {
         return true;
       }
     }
-    // Barriered doorways (locked by player)
     for (const d of VILLA_MAP.doorways) {
       if (d.isBarriered) {
         if (x + rad > d.x && x - rad < d.x + d.w && y + rad > d.y && y - rad < d.y + d.h) {
@@ -581,14 +622,13 @@ class GameEngine {
     // Furniture bounds
     const solidItems = [
       { x: 60, y: 70, w: 56, h: 60 },   // Fridge
-      { x: 120, y: 70, w: 160, h: 50 }, // Counter
-      { x: 150, y: 160, w: 190, h: 70 },// Beer Pong
-      { x: 60, y: 370, w: 140, h: 60 }, // DJ
+      { x: 170, y: 150, w: 180, h: 70 },// Beer Pong Table
+      { x: 60, y: 370, w: 140, h: 60 }, // DJ Booth
       { x: 80, y: 550, w: 160, h: 60 }, // Sofa
-      { x: 760, y: 60, w: 60, h: 40 },  // PC Desk
-      { x: 830, y: 60, w: 70, h: 40 },  // TV
+      { x: 750, y: 60, w: 60, h: 40 },  // PC Desk
+      { x: 820, y: 60, w: 70, h: 40 },  // TV
       { x: 910, y: 60, w: 70, h: 60 },  // Stairs
-      { x: 910, y: 170, w: 60, h: 80 }  // Bed
+      { x: 910, y: 160, w: 60, h: 80 }  // Bed
     ];
     for (const f of solidItems) {
       if (x + rad > f.x && x - rad < f.x + f.w && y + rad > f.y && y - rad < f.y + f.h) {
@@ -630,17 +670,14 @@ class GameEngine {
       }
     }
 
-    // 3. Check Fridge
+    // 3. Check Fridge (Contains Cocktail for Mari!)
     if (Math.hypot(p.x - 90, p.y - 100) < 55) {
       soundSystem.playPickup();
       if (!this.state.inventory.includes('drink')) {
         this.state.inventory.push('drink');
-        this.showToast("Hai preso: 'Cocktail Fragola & Menta' per Mari! 🍸");
-      } else if (!this.state.inventory.includes('beer')) {
-        this.state.inventory.push('beer');
-        this.showToast("Hai preso: 'Birra Gelata' per DJ Lollo! 🍺");
+        this.showToast("Hai preso dal frigo: 'Cocktail Fragola & Menta' per Mari! 🍸");
       } else {
-        this.showToast("Il frigo è pieno di bibite fresche.");
+        this.showToast("Hai già il cocktail per Mari nel tuo inventario.");
       }
       this.updateHUD();
       return;
@@ -659,10 +696,10 @@ class GameEngine {
       this.state.inventory.splice(idx, 1);
       this.chipsFloor = { x: this.player.x, y: this.player.y };
       soundSystem.playPickup();
-      this.showToast("🍟 Hai buttato a terra le patatine di Bubi!");
+      this.showToast("🍟 Hai buttato a terra le patatine di Jona!");
       this.updateHUD();
     } else {
-      this.showToast("Non hai patatine! Parla con Bubi in cucina.");
+      this.showToast("Non hai patatine! Chiedile a Jona al tavolo del Beer Pong.");
     }
   }
 
@@ -682,7 +719,6 @@ class GameEngine {
 
     overlay.classList.remove('hidden');
 
-    // Show Battle Portraits when speaking with Mari!
     if (speakerId === 'mari' || this.state.mariAlone) {
       cutinRow.style.display = 'flex';
     } else {
@@ -735,11 +771,18 @@ class GameEngine {
       if (mari) mari.isFollowing = true;
       soundSystem.playHeart();
       this.showToast("❤️ Mari ti sta seguendo! Portala in una stanza tranquilla senza farti beccare!");
-    } else if (choice.action === 'give_chips') {
+    } else if (choice.action === 'get_beer') {
+      if (!this.state.inventory.includes('beer')) {
+        this.state.inventory.push('beer');
+        soundSystem.playPickup();
+        this.showToast("Hai preso la Birra Gelata da Matti per DJ Lollo! 🍺");
+        this.updateHUD();
+      }
+    } else if (choice.action === 'get_chips') {
       if (!this.state.inventory.includes('chips')) {
         this.state.inventory.push('chips');
         soundSystem.playPickup();
-        this.showToast("Hai ottenuto il Sacchetto di Patatine di Bubi!");
+        this.showToast("Hai preso il Sacchetto di Patatine da Jona! 🍟");
         this.updateHUD();
       }
     } else if (choice.action === 'set_romance') {
@@ -755,18 +798,16 @@ class GameEngine {
 
   escapeMaya() {
     this.closeDialogue();
-    // Move Leon away safely
     const pushDist = 80;
     const nx = (this.player.dir === 'left') ? this.player.x - pushDist : this.player.x + pushDist;
     if (!this.isSolid(nx, this.player.y)) this.player.x = nx;
 
-    // Maya gets confused for 10 seconds!
     const maya = this.npcs.find(n => n.id === 'maya');
     if (maya) {
       maya.state = 'confused';
       maya.confusedTimer = 600;
     }
-    this.player.shieldTimer = 240; // 4 seconds invulnerability
+    this.player.shieldTimer = 240;
     soundSystem.playTone(600, 'sine', 0.15, 0.15);
     this.showToast("💨 Sei sfuggito a Maya! È confusa per qualche secondo!");
   }
@@ -780,7 +821,7 @@ class GameEngine {
     }
     this.player.shieldTimer = 240;
     soundSystem.playHeart();
-    this.showToast("🍟 Maya sta divorando le patatine! Corri!");
+    this.showToast("🍟 Maya sta divorando le patatine di Jona! Corri!");
   }
 
   closeDialogue() {
@@ -877,7 +918,7 @@ class GameEngine {
       }
     }
 
-    // 2. Maya AI (Free of freeze bugs!)
+    // 2. Maya AI
     const maya = this.npcs.find(n => n.id === 'maya');
     if (maya) {
       maya.room = this.getRoomAt(maya.x, maya.y).id;
@@ -898,7 +939,7 @@ class GameEngine {
           maya.confusedTimer = 480;
           this.chipsFloor = null;
           soundSystem.playHeart();
-          this.showToast("🍟 Maya è occupata a mangiare patatine!");
+          this.showToast("🍟 Maya è occupata a mangiare le patatine di Jona!");
           return;
         }
       }
@@ -923,7 +964,7 @@ class GameEngine {
         if (distLeon < 32 && !this.state.dialogueOpen) {
           if (mari && mari.isFollowing) {
             mari.isFollowing = false;
-            mari.x = 320; mari.y = 420;
+            mari.x = 300; mari.y = 420;
             this.state.mariFollowing = false;
             this.state.mariLove = Math.max(30, this.state.mariLove - 15);
             this.updateHUD();
@@ -1047,7 +1088,6 @@ class GameEngine {
   render() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Camera follow Leon
     this.camera.x += (this.player.x - this.camera.x) * 0.1;
     this.camera.y += (this.player.y - this.camera.y) * 0.1;
 
@@ -1062,10 +1102,8 @@ class GameEngine {
       this.ctx.scale(fit, fit);
     }
 
-    // Draw Villa Rooms & Pokemon Perla Tiles
     this.drawVilla();
 
-    // Draw Dropped Chips
     if (this.chipsFloor) {
       this.ctx.fillStyle = '#f59e0b';
       this.ctx.beginPath();
@@ -1076,20 +1114,16 @@ class GameEngine {
       this.ctx.fillText('🍟 PATATINE', this.chipsFloor.x - 24, this.chipsFloor.y - 12);
     }
 
-    // Draw Characters
     this.npcs.forEach(n => this.drawCharacter(n));
 
-    // Draw Player (with invulnerability flash if shielded)
     if (this.player.shieldTimer <= 0 || Math.floor(Date.now() / 80) % 2 === 0) {
       this.drawCharacter(this.player, true);
     }
 
-    // Interaction tooltip
     if (!this.state.dialogueOpen && !this.state.won) {
       this.drawInteractionTip();
     }
 
-    // Alone romance glow
     if (this.aloneCountdown > 0) {
       const alpha = Math.min(0.35, this.aloneCountdown / 200);
       this.ctx.fillStyle = `rgba(236, 72, 153, ${alpha})`;
@@ -1103,7 +1137,7 @@ class GameEngine {
   }
 
   drawVilla() {
-    // 1. Draw Rooms with authentic Pokemon Perla textures!
+    // 1. Rooms
     VILLA_MAP.rooms.forEach(r => {
       if (r.type === 'wood' || r.type === 'perla_room') {
         if (this.pkmn.floor && this.pkmn.floor.complete) {
@@ -1129,7 +1163,6 @@ class GameEngine {
         this.ctx.fillRect(r.x, r.y, r.w, r.h);
       }
 
-      // Room Name Tag
       this.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
       this.ctx.fillRect(r.x + 8, r.y + 6, r.name.length * 7 + 14, 18);
       this.ctx.fillStyle = '#fef08a';
@@ -1137,50 +1170,23 @@ class GameEngine {
       this.ctx.fillText(r.name.toUpperCase(), r.x + 14, r.y + 19);
     });
 
-    // 2. Camera Relax: EXACT Pokemon Perla Bedroom Furniture (from reference image!)
+    // 2. Camera Relax: EXACT Pokemon Perla Bedroom Furniture (from reference image)
     const bedRoom = VILLA_MAP.rooms.find(rm => rm.id === 'bedroom');
     if (bedRoom) {
-      // Pokemon Bed
-      if (this.pkmn.bed && this.pkmn.bed.complete) {
-        this.ctx.drawImage(this.pkmn.bed, 920, 160, 50, 70);
-      }
-      // PC Desk
-      if (this.pkmn.pc_desk && this.pkmn.pc_desk.complete) {
-        this.ctx.drawImage(this.pkmn.pc_desk, 750, 60, 54, 70);
-      }
-      // TV with Wii Console
-      if (this.pkmn.tv && this.pkmn.tv.complete) {
-        this.ctx.drawImage(this.pkmn.tv, 820, 60, 70, 48);
-      }
-      // Stairs
-      if (this.pkmn.stairs && this.pkmn.stairs.complete) {
-        this.ctx.drawImage(this.pkmn.stairs, 910, 60, 70, 46);
-      }
-      // Pastel Pink & Yellow Rug in Center
-      if (this.pkmn.rug && this.pkmn.rug.complete) {
-        this.ctx.drawImage(this.pkmn.rug, 800, 140, 95, 60);
-      }
-      // Potted Ficus Plant
-      if (this.pkmn.plant && this.pkmn.plant.complete) {
-        this.ctx.drawImage(this.pkmn.plant, 750, 240, 26, 52);
-      }
+      if (this.pkmn.bed && this.pkmn.bed.complete) this.ctx.drawImage(this.pkmn.bed, 920, 160, 50, 70);
+      if (this.pkmn.pc_desk && this.pkmn.pc_desk.complete) this.ctx.drawImage(this.pkmn.pc_desk, 750, 60, 54, 70);
+      if (this.pkmn.tv && this.pkmn.tv.complete) this.ctx.drawImage(this.pkmn.tv, 820, 60, 70, 48);
+      if (this.pkmn.stairs && this.pkmn.stairs.complete) this.ctx.drawImage(this.pkmn.stairs, 910, 60, 70, 46);
+      if (this.pkmn.rug && this.pkmn.rug.complete) this.ctx.drawImage(this.pkmn.rug, 800, 140, 95, 60);
+      if (this.pkmn.plant && this.pkmn.plant.complete) this.ctx.drawImage(this.pkmn.plant, 750, 240, 26, 52);
     }
 
     // 3. Salone & Cucina Decor
-    // Salone Rug
-    if (this.pkmn.rug && this.pkmn.rug.complete) {
-      this.ctx.drawImage(this.pkmn.rug, 120, 560, 120, 76);
-    }
-    // Salone TV
-    if (this.pkmn.tv && this.pkmn.tv.complete) {
-      this.ctx.drawImage(this.pkmn.tv, 360, 560, 80, 55);
-    }
-    // Salone Plant
-    if (this.pkmn.plant && this.pkmn.plant.complete) {
-      this.ctx.drawImage(this.pkmn.plant, 450, 360, 30, 58);
-    }
+    if (this.pkmn.rug && this.pkmn.rug.complete) this.ctx.drawImage(this.pkmn.rug, 120, 560, 120, 76);
+    if (this.pkmn.tv && this.pkmn.tv.complete) this.ctx.drawImage(this.pkmn.tv, 360, 560, 80, 55);
+    if (this.pkmn.plant && this.pkmn.plant.complete) this.ctx.drawImage(this.pkmn.plant, 450, 360, 30, 58);
 
-    // Hearthome Contest Dancefloor
+    // Dancefloor
     this.ctx.fillStyle = '#7c3aed';
     this.ctx.fillRect(230, 380, 180, 140);
     this.ctx.strokeStyle = '#fbbf24';
@@ -1199,30 +1205,31 @@ class GameEngine {
     this.ctx.font = '9px monospace';
     this.ctx.fillText('DJ LOLLO (MS)', 90, 405);
 
-    // Beer Pong Table
+    // Beer Pong Table (Ara + Kri VS Matti + Jona!)
     this.ctx.fillStyle = '#1e293b';
-    this.ctx.fillRect(150, 160, 190, 70);
+    this.ctx.fillRect(170, 150, 180, 70);
     this.ctx.strokeStyle = '#fbbf24';
-    this.ctx.strokeRect(150, 160, 190, 70);
-    // Red Pokeball cups
+    this.ctx.strokeRect(170, 150, 180, 70);
+
+    // Red Pokeball cups on Ara & Kri side
     this.ctx.fillStyle = '#ef4444';
     for (let i = 0; i < 6; i++) {
       this.ctx.beginPath();
-      this.ctx.arc(170 + (i % 3) * 14, 180 + Math.floor(i / 3) * 16, 5, 0, Math.PI * 2);
+      this.ctx.arc(185 + (i % 3) * 14, 165 + Math.floor(i / 3) * 16, 5, 0, Math.PI * 2);
       this.ctx.fill();
     }
-    // Blue cups
+    // Blue cups on Matti & Jona side
     this.ctx.fillStyle = '#3b82f6';
     for (let i = 0; i < 6; i++) {
       this.ctx.beginPath();
-      this.ctx.arc(300 + (i % 3) * 14, 180 + Math.floor(i / 3) * 16, 5, 0, Math.PI * 2);
+      this.ctx.arc(305 + (i % 3) * 14, 165 + Math.floor(i / 3) * 16, 5, 0, Math.PI * 2);
       this.ctx.fill();
     }
     this.ctx.fillStyle = '#fbbf24';
-    this.ctx.font = '10px monospace';
-    this.ctx.fillText('BEER PONG', 215, 200);
+    this.ctx.font = '9px monospace';
+    this.ctx.fillText('ARA+KRI vs MATTI+JONA', 188, 190);
 
-    // Fridge
+    // Fridge (Drink per Mari!)
     this.ctx.fillStyle = '#94a3b8';
     this.ctx.fillRect(60, 70, 56, 60);
     this.ctx.fillStyle = '#334155';
@@ -1231,13 +1238,12 @@ class GameEngine {
     this.ctx.font = '9px monospace';
     this.ctx.fillText('FRIGO', 70, 120);
 
-    // Balcony Landscape (Mt. Coronet & Lake Verity)
+    // Balcony Landscape
     const balc = VILLA_MAP.rooms.find(rm => rm.id === 'balcony');
     if (balc) {
       const skyX = balc.x + balc.w - 110;
       this.ctx.fillStyle = '#0f172a';
       this.ctx.fillRect(skyX, balc.y, 110, balc.h);
-      // Mt Coronet Peak
       this.ctx.fillStyle = '#1e293b';
       this.ctx.beginPath();
       this.ctx.moveTo(skyX, balc.y + balc.h);
@@ -1246,19 +1252,17 @@ class GameEngine {
       this.ctx.lineTo(skyX + 110, balc.y + 90);
       this.ctx.lineTo(skyX + 110, balc.y + balc.h);
       this.ctx.fill();
-      // Stars
       this.ctx.fillStyle = '#fff';
       for (let i = 0; i < 16; i++) {
         const sx = skyX + 8 + (i * 27) % 94;
         const sy = balc.y + 6 + (i * 23) % (balc.h - 50);
         this.ctx.fillRect(sx, sy, 2, 2);
       }
-      // Wooden Bench
       this.ctx.fillStyle = '#78350f';
       this.ctx.fillRect(balc.x + 20, balc.y + 110, 80, 36);
     }
 
-    // 4. Draw Walls (Wood paneling)
+    // Walls
     VILLA_MAP.walls.forEach(w => {
       if (this.pkmn.wall && this.pkmn.wall.complete) {
         const pat = this.ctx.createPattern(this.pkmn.wall, 'repeat');
@@ -1272,9 +1276,8 @@ class GameEngine {
       this.ctx.strokeRect(w.x, w.y, w.w, w.h);
     });
 
-    // 5. Draw Wide Open Doorway Thresholds & Woven Mats
+    // Doorway thresholds & mats
     VILLA_MAP.doorways.forEach(d => {
-      // Doormat
       this.ctx.fillStyle = d.matColor || '#cbd5e1';
       this.ctx.fillRect(d.x - 4, d.y + 4, d.w + 8, d.h - 8);
       this.ctx.strokeStyle = '#ffffff';
@@ -1282,7 +1285,6 @@ class GameEngine {
       this.ctx.strokeRect(d.x - 4, d.y + 4, d.w + 8, d.h - 8);
 
       if (d.isBarriered) {
-        // Red velvet barrier cord
         this.ctx.fillStyle = '#dc2626';
         this.ctx.fillRect(d.x, d.y, d.w, d.h);
         this.ctx.fillStyle = '#fef08a';
@@ -1333,7 +1335,7 @@ class GameEngine {
     const p = this.player;
     let tip = null;
 
-    // Check Doorway Barrier Toggle (Bedroom & Balcony)
+    // Check Doorway Barrier (Bedroom & Balcony)
     for (const d of VILLA_MAP.doorways) {
       if (d.id === 'door_bedroom' || d.id === 'door_balcony') {
         const cx = d.x + d.w / 2;
@@ -1357,7 +1359,7 @@ class GameEngine {
 
     // Check Fridge
     if (!tip && Math.hypot(p.x - 90, p.y - 100) < 55) {
-      tip = `[E / Spazio] Apri Frigorifero`;
+      tip = `[E / Spazio] Apri Frigorifero (Cocktail per Mari)`;
     }
 
     if (tip) {
