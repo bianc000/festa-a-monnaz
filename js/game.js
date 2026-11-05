@@ -660,6 +660,14 @@ class GameEngine {
           return;
         }
       }
+      if (d.id === 'door_bathroom') {
+        const cx = d.x + d.w / 2;
+        const cy = d.y + d.h / 2;
+        if (Math.hypot(p.x - cx, p.y - cy) < 55) {
+          this.openDialogue('bubi');
+          return;
+        }
+      }
     }
 
     // 2. Check nearby NPC to talk
@@ -1173,12 +1181,37 @@ class GameEngine {
     // 2. Camera Relax: EXACT Pokemon Perla Bedroom Furniture (from reference image)
     const bedRoom = VILLA_MAP.rooms.find(rm => rm.id === 'bedroom');
     if (bedRoom) {
+      if (this.pkmn.window && this.pkmn.window.complete) this.ctx.drawImage(this.pkmn.window, 840, 42, 50, 42);
       if (this.pkmn.bed && this.pkmn.bed.complete) this.ctx.drawImage(this.pkmn.bed, 920, 160, 50, 70);
       if (this.pkmn.pc_desk && this.pkmn.pc_desk.complete) this.ctx.drawImage(this.pkmn.pc_desk, 750, 60, 54, 70);
       if (this.pkmn.tv && this.pkmn.tv.complete) this.ctx.drawImage(this.pkmn.tv, 820, 60, 70, 48);
       if (this.pkmn.stairs && this.pkmn.stairs.complete) this.ctx.drawImage(this.pkmn.stairs, 910, 60, 70, 46);
       if (this.pkmn.rug && this.pkmn.rug.complete) this.ctx.drawImage(this.pkmn.rug, 800, 140, 95, 60);
       if (this.pkmn.plant && this.pkmn.plant.complete) this.ctx.drawImage(this.pkmn.plant, 750, 240, 26, 52);
+    }
+
+    // 2b. Bagno Fixtures: Water Closet (WC) e Lavandino per Bubi!
+    const bathRoom = VILLA_MAP.rooms.find(rm => rm.id === 'bathroom');
+    if (bathRoom) {
+      // Lavandino con specchio
+      this.ctx.fillStyle = '#64748b';
+      this.ctx.fillRect(760, 365, 34, 10);
+      this.ctx.fillStyle = '#f8fafc';
+      this.ctx.fillRect(762, 375, 30, 22);
+      this.ctx.strokeStyle = '#94a3b8';
+      this.ctx.strokeRect(762, 375, 30, 22);
+      this.ctx.fillStyle = '#38bdf8';
+      this.ctx.fillRect(770, 381, 14, 10);
+
+      // WC in ceramica bianca
+      this.ctx.fillStyle = '#e2e8f0';
+      this.ctx.fillRect(835, 365, 26, 16);
+      this.ctx.fillStyle = '#ffffff';
+      this.ctx.beginPath();
+      this.ctx.ellipse(848, 392, 12, 15, 0, 0, Math.PI * 2);
+      this.ctx.fill();
+      this.ctx.strokeStyle = '#cbd5e1';
+      this.ctx.stroke();
     }
 
     // 3. Salone & Cucina Decor
@@ -1342,6 +1375,14 @@ class GameEngine {
         const cy = d.y + d.h / 2;
         if (Math.hypot(p.x - cx, p.y - cy) < 48) {
           tip = `[E / Spazio] ${d.isBarriered ? 'Togli Barriera' : 'Chiudi Barriera Privacy'}`;
+          break;
+        }
+      }
+      if (d.id === 'door_bathroom') {
+        const cx = d.x + d.w / 2;
+        const cy = d.y + d.h / 2;
+        if (Math.hypot(p.x - cx, p.y - cy) < 55) {
+          tip = `[E / Spazio] Bussa al Bagno (Occupato da Bubi!)`;
           break;
         }
       }
