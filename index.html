@@ -4,9 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Leon & la bella Mari: Notte a Monnaz (Edizione Pokémon Perla)</title>
-  <link rel="stylesheet" href="css/style.css?v=20261105c">
+  <link rel="stylesheet" href="css/style.css?v=20261105d">
 </head>
 <body>
+
+  <!-- Gate Password Protection (megapattone) -->
+  <div id="gateOverlay" class="gate-overlay">
+    <div class="gate-modal">
+      <div class="gate-icon">🔒</div>
+      <h2 class="gate-title">FESTA A MONNAZ</h2>
+      <div class="gate-subtitle">Accesso Riservato • Solo Membri & Ospiti MS</div>
+      
+      <p class="gate-text">Inserisci la parola d'ordine segreta per entrare nella villa di Kri:</p>
+      
+      <form id="gateForm">
+        <input type="password" id="gateInput" class="gate-input" placeholder="Parola d'ordine..." autofocus autocomplete="off">
+        <button type="submit" id="gateBtn" class="gate-btn">ENTRA ALLA FESTA 🔴</button>
+      </form>
+      <div id="gateError" class="gate-error hidden">❌ Password errata! Solo chi ha l'invito può entrare.</div>
+    </div>
+  </div>
 
   <!-- Header -->
   <header>
@@ -117,6 +134,6 @@
   </div>
 
   <!-- Unified Engine Script (Cache-busted) -->
-  <script src="js/game.js?v=perla20261105f"></script>
+  <script src="js/game.js?v=perla20261105g"></script>
 </body>
 </html>

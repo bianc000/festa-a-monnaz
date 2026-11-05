@@ -1441,7 +1441,85 @@ class GameEngine {
   }
 }
 
+// ============================================================
+// PASSWORD GATE CONTROLLER (megapattone)
+// ============================================================
+const GATE_PASSWORD = 'megapattone';
+
+function checkAuth() {
+  // 1. Check URL parameters for direct link sharing (?pwd=megapattone or ?pass=megapattone)
+  const urlParams = new URLSearchParams(window.location.search);
+  const qPwd = urlParams.get('pwd') || urlParams.get('pass') || urlParams.get('password');
+  if (qPwd && qPwd.toLowerCase().trim() === GATE_PASSWORD) {
+    try {
+      localStorage.setItem('monnaz_auth', GATE_PASSWORD);
+      sessionStorage.setItem('monnaz_auth', GATE_PASSWORD);
+    } catch (e) {}
+    return true;
+  }
+
+  // 2. Check stored session / local storage
+  try {
+    if (localStorage.getItem('monnaz_auth') === GATE_PASSWORD) return true;
+    if (sessionStorage.getItem('monnaz_auth') === GATE_PASSWORD) return true;
+  } catch (e) {}
+
+  return false;
+}
+
+function initGate() {
+  const overlay = document.getElementById('gateOverlay');
+  const form = document.getElementById('gateForm');
+  const input = document.getElementById('gateInput');
+  const errorEl = document.getElementById('gateError');
+  const modal = document.querySelector('.gate-modal');
+
+  const startGame = () => {
+    if (overlay) overlay.classList.add('hidden');
+    if (!window.gameEngine) {
+      window.gameEngine = new GameEngine();
+    }
+  };
+
+  if (checkAuth()) {
+    startGame();
+    return;
+  }
+
+  // Gate is locked
+  if (overlay) {
+    overlay.classList.remove('hidden');
+    setTimeout(() => { if (input) input.focus(); }, 200);
+  }
+
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = (input.value || '').toLowerCase().trim();
+      if (val === GATE_PASSWORD) {
+        try {
+          localStorage.setItem('monnaz_auth', GATE_PASSWORD);
+          sessionStorage.setItem('monnaz_auth', GATE_PASSWORD);
+        } catch (e) {}
+        if (errorEl) errorEl.classList.add('hidden');
+        startGame();
+      } else {
+        if (errorEl) errorEl.classList.remove('hidden');
+        if (modal) {
+          modal.classList.remove('shake');
+          void modal.offsetWidth; // Force CSS animation restart
+          modal.classList.add('shake');
+        }
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
+      }
+    });
+  }
+}
+
 // Global initialization
 window.addEventListener('DOMContentLoaded', () => {
-  window.gameEngine = new GameEngine();
+  initGate();
 });
